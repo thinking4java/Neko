@@ -1,1 +1,23 @@
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:devdb
+    username: sa
+    password: changeme
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
 app:
+  schedule:
+    match:
+      baseUrl: 'https://m.nowscore.com/results.htm?date=<placeholder>'
+    fixedRate: '18000'
+
+

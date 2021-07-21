@@ -26,31 +26,35 @@ public class MatchParserImpl implements IMatchParser {
 
     @Override
     public List<League> parse(String data) {
-        if (!ObjectUtils.isEmpty(data)) {
-            List<League> leagueList = new ArrayList<>();
-            Elements elements = Jsoup.parse(data).select("script[type=\"text/javascript\"]");
-            for (Element element : elements) {
-                String html = element.html();
-                if (!html.contains("var jsData")) {
-                    continue;
-                }
-                Matcher matcher = REGEX.matcher(html);
-                if (matcher.matches() && matcher.groupCount() >= 2) {
-                    String leagueData = matcher.group(1);
-                    Map<Integer, League> leagueMap = parseLeague(leagueData);
-                    String matchesData = matcher.group(2);
-                    List<Match> matches = parseMatches(matchesData, leagueMap);
-                    matches.stream().collect(Collectors.groupingBy(Match::getLeague))
-                            .forEach((league, matchList) -> {
-                                league.setMatchList(matchList);
-                                leagueList.add(league);
-                            });
-                    break;
-                }
+        if (ObjectUtils.isEmpty(data)) {
+            return Collections.emptyList();
+        }
+        Elements elements = Jsoup.parse(data).select("script[type=\"text/javascript\"]");
+        for (Element element : elements) {
+            String html = element.html();
+            if (!html.contains("var jsData")) {
+                continue;
             }
-            return leagueList;
+            Matcher matcher = REGEX.matcher(html);
+            if (matcher.matches() && matcher.groupCount() >= 2) {
+                String leagueData = matcher.group(1);
+                String matchesData = matcher.group(2);
+                Map<Integer, League> leagueMap = parseLeague(leagueData);
+                List<Match> matches = parseMatches(matchesData, leagueMap);
+                return groupBy(matches);
+            }
         }
         return Collections.emptyList();
+    }
+
+    private List<League> groupBy(List<Match> matches) {
+        List<League> leagueList = new ArrayList<>();
+        matches.stream().collect(Collectors.groupingBy(Match::getLeague))
+                .forEach((league, matchList) -> {
+                    league.setMatchList(matchList);
+                    leagueList.add(league);
+                });
+        return leagueList;
     }
 
     private Map<Integer, League> parseLeague(String leagueData) {
@@ -89,7 +93,7 @@ public class MatchParserImpl implements IMatchParser {
     }
 
 
-    private Match parseMatch(String strMatch, Map<Integer, League> leagueMap) throws Exception {
+    private Match parseMatch(String strMatch, Map<Integer, League> leagueMap) {
         String[] splits = strMatch.split("\\^");
         if (!ObjectUtils.isEmpty(splits) && splits.length >= 15) {
             Match match = new Match();

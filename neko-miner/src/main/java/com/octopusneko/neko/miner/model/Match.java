@@ -40,6 +40,16 @@ public class Match {
     private int homeRedCards;
     private int awayRedCards;
 
+    public Match() {
+    }
+
+
+    public Match(Long id, League league, MatchState state) {
+        this.id = id;
+        this.league = league;
+        this.state = state;
+    }
+
     public Long getId() {
         return id;
     }

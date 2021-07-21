@@ -12,7 +12,7 @@ public class MatchServiceImpl implements IMatchService {
     private LeagueRepository leagueRepository;
 
     @Override
-    public void save(League league) {
-        leagueRepository.save(league);
+    public League save(League league) {
+        return leagueRepository.save(league);
     }
 }

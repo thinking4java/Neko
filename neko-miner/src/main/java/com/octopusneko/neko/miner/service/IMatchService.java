@@ -4,5 +4,5 @@ import com.octopusneko.neko.miner.model.League;
 
 public interface IMatchService {
 
-    void save(League league);
+    League save(League league);
 }

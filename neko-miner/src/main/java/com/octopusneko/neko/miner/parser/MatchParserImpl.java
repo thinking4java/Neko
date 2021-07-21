@@ -4,6 +4,9 @@ import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.MatchState;
 import com.octopusneko.neko.miner.utils.DateUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,20 +27,28 @@ public class MatchParserImpl implements IMatchParser {
     @Override
     public List<League> parse(String data) {
         if (!ObjectUtils.isEmpty(data)) {
-            Matcher matcher = REGEX.matcher(data);
-            if (matcher.matches() && matcher.groupCount() >= 2) {
-                String leagueData = matcher.group(1);
-                Map<Integer, League> leagueMap = parseLeague(leagueData);
-                String matchesData = matcher.group(2);
-                List<League> leagueList = new ArrayList<>();
-                List<Match> matches = parseMatches(matchesData, leagueMap);
-                matches.stream().collect(Collectors.groupingBy(Match::getLeague))
-                        .forEach((league, matchList) -> {
-                            league.setMatchList(matchList);
-                            leagueList.add(league);
-                        });
-                return leagueList;
+            List<League> leagueList = new ArrayList<>();
+            Elements elements = Jsoup.parse(data).select("script[type=\"text/javascript\"]");
+            for (Element element : elements) {
+                String html = element.html();
+                if (!html.contains("var jsData")) {
+                    continue;
+                }
+                Matcher matcher = REGEX.matcher(html);
+                if (matcher.matches() && matcher.groupCount() >= 2) {
+                    String leagueData = matcher.group(1);
+                    Map<Integer, League> leagueMap = parseLeague(leagueData);
+                    String matchesData = matcher.group(2);
+                    List<Match> matches = parseMatches(matchesData, leagueMap);
+                    matches.stream().collect(Collectors.groupingBy(Match::getLeague))
+                            .forEach((league, matchList) -> {
+                                league.setMatchList(matchList);
+                                leagueList.add(league);
+                            });
+                    break;
+                }
             }
+            return leagueList;
         }
         return Collections.emptyList();
     }

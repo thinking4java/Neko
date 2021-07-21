@@ -10,8 +10,8 @@ public class Match {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "LEAGUE_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "league_id", nullable = false)
     private League league;
 
     @Enumerated(EnumType.STRING)

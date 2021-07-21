@@ -18,8 +18,7 @@ public class League implements Comparable<League> {
 
     private boolean isTopLevel;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "league_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "league", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Match> matchList = new ArrayList<>();
 
     public League() {

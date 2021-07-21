@@ -9,7 +9,7 @@ public enum MatchState {
     PENALTY_KICK(5),
 
     FINISHED(-1),
-    CANCLLED(-10),
+    CANCELED(-10),
     TBD(-11),
     CUT_OFF(-12),
     INTERRUPTED(-13),
@@ -43,7 +43,7 @@ public enum MatchState {
             case -1:
                 return FINISHED;
             case -10:
-                return CANCLLED;
+                return CANCELED;
             case -11:
                 return TBD;
             case -12:

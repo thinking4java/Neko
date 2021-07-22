@@ -26,7 +26,7 @@ import java.util.List;
 @Component
 public class ScheduleTasks {
 
-    @Value("${app.schedule.match.baseUrl}")
+    @Value("${app.match.baseUrl}")
     private String baseUrl;
 
     private final RestTemplate restTemplate;

@@ -16,8 +16,20 @@ spring:
 
 app:
   schedule:
-    match:
-      baseUrl: 'https://m.nowscore.com/results.htm?date=<placeholder>'
     fixedRate: '18000'
-
-
+  match:
+    baseUrl: 'https://m.nowscore.com/results.htm?date=<placeholder>'
+    asiaProviders:
+      -
+        id: 9
+        name: '威廉希尔'
+      -
+        id: 1
+        name: '澳门'
+    euroProviders:
+      -
+        id: 115
+        name: '威廉希尔'
+      -
+        id: 80
+        name: '澳门'

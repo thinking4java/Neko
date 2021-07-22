@@ -14,6 +14,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class MatchServiceImplTest {
@@ -28,14 +30,17 @@ class MatchServiceImplTest {
 
     @BeforeEach
     void setup() {
-        league.setMatchList(Arrays.asList(new Match(10000L, league, MatchState.FINISHED)));
-        Mockito.when(leagueRepository.save(Mockito.any())).thenReturn(league);
+        league.setMatchList(Collections.singletonList(new Match(10000L, league, MatchState.FINISHED)));
+        Mockito.when(leagueRepository.saveAll(Mockito.any())).thenReturn(Collections.singletonList(league));
     }
 
     @Test
     void testSaveLeagueWithMatchList() {
-        League savedLeague = matchService.save(league);
-        Assertions.assertNotNull(savedLeague);
+        List<League> savedLeagues = matchService.saveAll(Collections.singletonList(league));
+        Assertions.assertNotNull(savedLeagues);
+        Assertions.assertEquals(1, savedLeagues.size());
+
+        League savedLeague = savedLeagues.get(0);
         Assertions.assertTrue(savedLeague.isTopLevel());
         Assertions.assertNotNull(savedLeague.getMatchList());
         Assertions.assertEquals(1, savedLeague.getMatchList().size());

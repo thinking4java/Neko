@@ -1,11 +1,13 @@
 package com.octopusneko.neko.miner.schedule;
 
+import com.octopusneko.neko.miner.listener.MatchSavedEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.parser.IMatchParser;
 import com.octopusneko.neko.miner.service.IMatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.ApplicationListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,10 +37,12 @@ public class ScheduleTasks {
     @Autowired
     private IMatchService matchService;
 
+    @Autowired
+    private ApplicationListener<MatchSavedEvent> applicationListener;
+
     public ScheduleTasks(RestTemplateBuilder builder) {
         this.restTemplate = builder.build();
     }
-
 
     @Scheduled(fixedRateString = "${app.schedule.fixedRate}")
     public void updateMatch() {
@@ -46,8 +50,9 @@ public class ScheduleTasks {
         LocalDateTime currDateTenOClock = LocalDateTime.of(currDate, LocalTime.of(10, 0));
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = now.isBefore(currDateTenOClock) ? currDate.minusDays(1) : currDate;
-        List<League> leagueList = downloadLeagueMatches(date);
-        leagueList.forEach(league -> matchService.save(league));
+        List<League> leagues = downloadLeagueMatches(date);
+        List<League> savedLeagues = matchService.saveAll(leagues);
+        applicationListener.onApplicationEvent(new MatchSavedEvent(savedLeagues));
     }
 
     private List<League> downloadLeagueMatches(LocalDate date) {

@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +35,7 @@ class MatchServiceImplTest {
 
     @Test
     void testSaveLeagueWithMatchList() {
-        List<League> savedLeagues = matchService.saveAll(Collections.singletonList(league));
+        List<League> savedLeagues = matchService.saveLeagueMatches(Collections.singletonList(league));
         Assertions.assertNotNull(savedLeagues);
         Assertions.assertEquals(1, savedLeagues.size());
 

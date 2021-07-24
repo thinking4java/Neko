@@ -18,18 +18,20 @@ app:
   schedule:
     fixedRate: '18000'
   match:
-    baseUrl: 'https://m.nowscore.com/results.htm?date=<placeholder>'
-    asiaProviders:
-      -
-        id: 9
+    baseUrl: 'https://m.nowscore.com'
+    matchListPath: '/results.htm?date=<date>'
+    handicapPath: '/Handicap/<matchId>.htm'
+    handicapDetailPath: '/HandicapDetail/<matchId>_<providerId>.htm'
+    overUnderDetailPath: '/OuDetail/<matchId>_<providerId>.htm'
+    oddsPath: '/1x2/<placeholder>.htm'
+    oddsDetailPath: '/1x2Detail/<matchId>_<providerId>.htm'
+    handicapProviders:
+      - id: 9
         name: '威廉希尔'
-      -
-        id: 1
+      - id: 1
         name: '澳门'
-    euroProviders:
-      -
-        id: 115
+    oddsProviders:
+      - id: 115
         name: '威廉希尔'
-      -
-        id: 80
+      - id: 80
         name: '澳门'

@@ -1,6 +1,6 @@
 package com.octopusneko.neko.miner.config;
 
-import com.octopusneko.neko.miner.model.Provider;
+import com.octopusneko.neko.miner.payload.ProviderEntry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,23 +10,23 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app.match")
 public class ProviderConfig {
 
-    private List<Provider> asiaProviders;
+    private List<ProviderEntry> handicapProviders;
 
-    private List<Provider> euroProviders;
+    private List<ProviderEntry> oddsProviders;
 
-    public List<Provider> getAsiaProviders() {
-        return asiaProviders;
+    public List<ProviderEntry> getHandicapProviders() {
+        return handicapProviders;
     }
 
-    public void setAsiaProviders(List<Provider> asiaProviders) {
-        this.asiaProviders = asiaProviders;
+    public void setHandicapProviders(List<ProviderEntry> handicapProviders) {
+        this.handicapProviders = handicapProviders;
     }
 
-    public List<Provider> getEuroProviders() {
-        return euroProviders;
+    public List<ProviderEntry> getOddsProviders() {
+        return oddsProviders;
     }
 
-    public void setEuroProviders(List<Provider> euroProviders) {
-        this.euroProviders = euroProviders;
+    public void setOddsProviders(List<ProviderEntry> oddsProviders) {
+        this.oddsProviders = oddsProviders;
     }
 }

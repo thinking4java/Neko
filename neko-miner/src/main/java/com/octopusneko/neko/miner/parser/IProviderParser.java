@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IProviderParser {
 
-    List<Provider> parse(final Match match);
+    List<Provider> parse(final Match match, String data);
 
 }

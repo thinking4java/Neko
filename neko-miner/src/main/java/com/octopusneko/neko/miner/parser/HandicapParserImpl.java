@@ -3,6 +3,7 @@ package com.octopusneko.neko.miner.parser;
 import com.octopusneko.neko.miner.model.Handicap;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.utils.DateUtils;
+import com.octopusneko.neko.miner.utils.ParserUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -40,9 +41,9 @@ public class HandicapParserImpl implements IHandicapParser {
             Handicap handicap = new Handicap();
             handicap.setMatch(match);
             handicap.setProviderId(providerId);
-            handicap.setHome(parseFloat(tds.get(0).html()));
+            handicap.setHome(ParserUtils.parseFloat(tds.get(0).html()));
             handicap.setHandicap(parseHandicap(tds.get(1).html()));
-            handicap.setAway(parseFloat(tds.get(2).html()));
+            handicap.setAway(ParserUtils.parseFloat(tds.get(2).html()));
             String strTime = String.format("%d-%s", match.getMatchTime().getYear(), tds.get(3).html());
             ZonedDateTime updateTime = DateUtils.parseToUTCTime(strTime, "yyyy-MM-dd HH:mm");
             handicap.setUpdateTime(updateTime);
@@ -59,24 +60,13 @@ public class HandicapParserImpl implements IHandicapParser {
         if (str.contains("/")) {
             String[] split = str.split("/");
             if (split.length >= 2) {
-                float a = parseFloat(split[0]);
-                float b = parseFloat(split[1]);
+                float a = ParserUtils.parseFloat(split[0]);
+                float b = ParserUtils.parseFloat(split[1]);
                 boolean negative = a < 0;
                 float value = (Math.abs(a) + b) / 2;
                 return negative ? -value : value;
             }
         }
-        return parseFloat(str);
-    }
-
-    private static float parseFloat(String str) {
-        if (ObjectUtils.isEmpty(str)) {
-            return -99f;
-        }
-        try {
-            return Float.parseFloat(str);
-        } catch (Exception e) {
-            return -99f;
-        }
+        return ParserUtils.parseFloat(str);
     }
 }

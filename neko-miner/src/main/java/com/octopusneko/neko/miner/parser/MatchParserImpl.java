@@ -4,6 +4,7 @@ import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.MatchState;
 import com.octopusneko.neko.miner.utils.DateUtils;
+import com.octopusneko.neko.miner.utils.ParserUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -65,7 +66,7 @@ public class MatchParserImpl implements IMatchParser {
                 String[] splits = strLeague.split("\\^");
                 if (!ObjectUtils.isEmpty(splits) && splits.length >= 3) {
                     String name = splits[0];
-                    Integer id = parseInt(splits[1]);
+                    Integer id = ParserUtils.parseInt(splits[1]);
                     boolean isTopLevel = "1".equals(splits[2]);
                     League league = new League(id, name, isTopLevel);
                     map.put(id, league);
@@ -98,36 +99,28 @@ public class MatchParserImpl implements IMatchParser {
         if (!ObjectUtils.isEmpty(splits) && splits.length >= 15) {
             Match match = new Match();
             match.setId(Long.parseLong(splits[0]));
-            match.setLeague(leagueMap.get(parseInt(splits[1])));
-            match.setState(MatchState.from(parseInt(splits[2])));
+            match.setLeague(leagueMap.get(ParserUtils.parseInt(splits[1])));
+            match.setState(MatchState.from(ParserUtils.parseInt(splits[2])));
             match.setMatchTime(DateUtils.parseToUTCTime(splits[3], "yyyyMMddHHmmss"));
             match.setLocalTime(DateUtils.parseToLocalTime((ObjectUtils.isEmpty(splits[4]) ? splits[3] : splits[4]), "yyyyMMddHHmmss"));
 
             match.setHome(splits[5]);
             match.setAway(splits[6]);
 
-            match.setHomeGoals(parseInt(splits[7]));
-            match.setAwayGoals(parseInt(splits[8]));
+            match.setHomeGoals(ParserUtils.parseInt(splits[7]));
+            match.setAwayGoals(ParserUtils.parseInt(splits[8]));
 
-            match.setHomeHalfGoals(parseInt(splits[9]));
-            match.setAwayHalfGoals(parseInt(splits[10]));
+            match.setHomeHalfGoals(ParserUtils.parseInt(splits[9]));
+            match.setAwayHalfGoals(ParserUtils.parseInt(splits[10]));
 
-            match.setHomeRedCards(parseInt(splits[11]));
-            match.setAwayRedCards(parseInt(splits[12]));
+            match.setHomeRedCards(ParserUtils.parseInt(splits[11]));
+            match.setAwayRedCards(ParserUtils.parseInt(splits[12]));
 
-            match.setHomeYellowCards(parseInt(splits[13]));
-            match.setAwayYellowCards(parseInt(splits[14]));
+            match.setHomeYellowCards(ParserUtils.parseInt(splits[13]));
+            match.setAwayYellowCards(ParserUtils.parseInt(splits[14]));
 
             return match;
         }
         throw new IllegalArgumentException(String.format("Parse match error with string %s", strMatch));
     }
-
-    private static int parseInt(String str) {
-        if (ObjectUtils.isEmpty(str)) {
-            return 0;
-        }
-        return Integer.parseInt(str);
-    }
-
 }

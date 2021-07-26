@@ -33,8 +33,11 @@ public class Provider {
 
     public static class ProviderId implements Serializable {
 
-        private final long matchId;
-        private final int code;
+        private long matchId;
+        private int code;
+
+        public ProviderId() {
+        }
 
         public ProviderId(long matchId, int code) {
             this.matchId = matchId;

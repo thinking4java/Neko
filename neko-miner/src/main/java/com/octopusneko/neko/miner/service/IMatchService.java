@@ -15,4 +15,6 @@ public interface IMatchService {
     List<Handicap> saveHandicap(List<Handicap> handicapList);
 
     List<OverUnder> saveOverUnder(List<OverUnder> overUnderList);
+
+    Match findMatchById(long matchId);
 }

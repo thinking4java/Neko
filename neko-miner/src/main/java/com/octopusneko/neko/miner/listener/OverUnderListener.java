@@ -2,7 +2,7 @@ package com.octopusneko.neko.miner.listener;
 
 import com.octopusneko.neko.miner.config.ProviderConfig;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
-import com.octopusneko.neko.miner.model.Odds;
+import com.octopusneko.neko.miner.model.OverUnder;
 import com.octopusneko.neko.miner.model.Provider;
 import com.octopusneko.neko.miner.payload.ProviderEntry;
 import com.octopusneko.neko.miner.schedule.Scheduler;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("OddsListener")
-public class OddsListener implements ApplicationListener<ProviderEvent> {
+@Component("OverUnderListener")
+public class OverUnderListener implements ApplicationListener<ProviderEvent> {
 
     @Autowired
     private IMatchService matchService;
@@ -25,26 +25,26 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
     private ProviderConfig providerConfig;
 
     @Autowired
-    private Scheduler scheduler;
+    private RestService restService;
 
     @Autowired
-    private RestService restService;
+    private Scheduler scheduler;
 
     @Override
     public void onApplicationEvent(ProviderEvent event) {
-        List<Integer> oddProviderIds = providerConfig.getOddsProviders().stream()
+        List<Integer> handicapProviderIds = providerConfig.getOverUnderProviders().stream()
                 .map(ProviderEntry::getId)
                 .collect(Collectors.toList());
         List<Provider> filteredProviders = event.getProviders().stream()
-                .filter(provider -> oddProviderIds.contains(provider.getProviderId().getCode()))
+                .filter(provider -> handicapProviderIds.contains(provider.getProviderId().getCode()))
                 .collect(Collectors.toList());
 
         List<Provider> savedProviders = matchService.saveProviders(filteredProviders);
-        savedProviders.forEach(provider -> scheduler.schedule(() -> downloadOdds(provider)));
+        savedProviders.forEach(provider -> scheduler.schedule(() -> downloadOverUnder(provider)));
     }
 
-    private void downloadOdds(Provider provider) {
-        List<Odds> oddsList = restService.downloadOdds(provider);
-        matchService.saveOdds(oddsList);
+    private void downloadOverUnder(Provider provider) {
+        List<OverUnder> overUnderList = restService.downloadOverUnder(provider);
+        matchService.saveOverUnder(overUnderList);
     }
 }

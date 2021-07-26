@@ -14,6 +14,9 @@ public class MatchServiceImpl implements IMatchService {
     private LeagueRepository leagueRepository;
 
     @Autowired
+    private MatchRepository matchRepository;
+
+    @Autowired
     private ProviderRepository providerRepository;
 
     @Autowired
@@ -48,5 +51,10 @@ public class MatchServiceImpl implements IMatchService {
     @Override
     public List<OverUnder> saveOverUnder(List<OverUnder> overUnderList) {
         return overUnderRepository.saveAll(overUnderList);
+    }
+
+    @Override
+    public Match findMatchById(long matchId) {
+        return matchRepository.findById(matchId).orElseThrow(()-> new IllegalArgumentException(String.format("Match not found by id %d", matchId)));
     }
 }

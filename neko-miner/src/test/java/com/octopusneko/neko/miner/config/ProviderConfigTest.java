@@ -25,13 +25,21 @@ class ProviderConfigTest {
     @Test
     void testLoadConfig() {
         Assertions.assertNotNull(config);
+
         Assertions.assertNotNull(config.getHandicapProviders());
-        Assertions.assertEquals(2, config.getHandicapProviders().size());
-        Assertions.assertEquals(9, config.getHandicapProviders().get(0).getId());
+        Assertions.assertEquals(6, config.getHandicapProviders().size());
+        Assertions.assertEquals(1, config.getHandicapProviders().get(0).getId());
+        Assertions.assertEquals(14, config.getHandicapProviders().get(config.getHandicapProviders().size() - 1).getId());
 
         Assertions.assertNotNull(config.getOddsProviders());
-        Assertions.assertEquals(2, config.getOddsProviders().size());
-        Assertions.assertEquals(80, config.getOddsProviders().get(1).getId());
+        Assertions.assertEquals(7, config.getOddsProviders().size());
+        Assertions.assertEquals(80, config.getOddsProviders().get(0).getId());
+        Assertions.assertEquals(82, config.getOddsProviders().get(config.getOddsProviders().size() - 1).getId());
+
+        Assertions.assertNotNull(config.getOverUnderProviders());
+        Assertions.assertEquals(7, config.getOverUnderProviders().size());
+        Assertions.assertEquals(1, config.getOverUnderProviders().get(0).getId());
+        Assertions.assertEquals(4, config.getOverUnderProviders().get(config.getOverUnderProviders().size() - 1).getId());
     }
 
 }

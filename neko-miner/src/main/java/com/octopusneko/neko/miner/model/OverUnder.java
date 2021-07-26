@@ -19,7 +19,7 @@ public class OverUnder {
     private int providerId;
 
     private float home;
-    private float handicap;
+    private float overUnder;
     private float away;
 
     private ZonedDateTime updateTime;
@@ -56,12 +56,12 @@ public class OverUnder {
         this.home = home;
     }
 
-    public float getHandicap() {
-        return handicap;
+    public float getOverUnder() {
+        return overUnder;
     }
 
-    public void setHandicap(float handicap) {
-        this.handicap = handicap;
+    public void setOverUnder(float overUnder) {
+        this.overUnder = overUnder;
     }
 
     public float getAway() {

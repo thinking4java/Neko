@@ -23,7 +23,7 @@ public class MatchParserImpl implements IMatchParser {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchParserImpl.class);
 
-    private static final Pattern REGEX = Pattern.compile(".*var jsData=(.*)\\$(.*);var dateStr=.*");
+    private static final Pattern REGEX = Pattern.compile(".*var jsData\\s*=\\s*\\\"(.*)\\$(.*)\\\";var dateStr=.*");
 
     @Override
     public List<League> parse(String data) {

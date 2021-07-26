@@ -47,12 +47,25 @@ class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor
             ClientHttpRequestExecution execution) throws IOException {
 
         logRequestDetails(request);
-        return execution.execute(request, body);
+        ClientHttpResponse response = execution.execute(request, body);
+        logResponseDetails(response);
+        return response;
     }
 
-    private void logRequestDetails(HttpRequest request) {
-        logger.info("Headers: {}", request.getHeaders());
-        logger.info("Request Method: {}", request.getMethod());
-        logger.info("Request URI: {}", request.getURI());
+    private void logResponseDetails(ClientHttpResponse response) throws IOException {
+        logger.debug("=======================response begin=======================");
+        logger.debug("Status code  : {}", response.getStatusCode());
+        logger.debug("Status text  : {}", response.getStatusText());
+        logger.debug("Headers      : {}", response.getHeaders());
+        logger.debug("=======================response   end=======================");
+
+    }
+
+    private void logRequestDetails(HttpRequest request) throws IOException {
+        logger.debug("=======================request begin=======================");
+        logger.debug("Headers: {}", request.getHeaders());
+        logger.debug("Request Method: {}", request.getMethod());
+        logger.debug("Request URI: {}", request.getURI());
+        logger.debug("=======================request   end=======================");
     }
 }

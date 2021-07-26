@@ -60,6 +60,19 @@ public class Provider {
         public int getType() {
             return type;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ProviderId that = (ProviderId) o;
+            return matchId == that.matchId && code == that.code && type == that.type;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(matchId, code, type);
+        }
     }
 
     @Override
@@ -73,5 +86,10 @@ public class Provider {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return providerId.getCode() + "->" + name;
     }
 }

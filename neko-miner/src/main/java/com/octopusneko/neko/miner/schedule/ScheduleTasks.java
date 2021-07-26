@@ -4,6 +4,7 @@ import com.octopusneko.neko.miner.listener.event.MatchListEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.service.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ScheduleTasks {
 
     @Autowired
+    @Qualifier("MatchListListener")
     private ApplicationListener<MatchListEvent> applicationListener;
 
     @Autowired

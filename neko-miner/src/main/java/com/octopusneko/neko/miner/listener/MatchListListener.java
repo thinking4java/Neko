@@ -1,8 +1,7 @@
 package com.octopusneko.neko.miner.listener;
 
-import com.octopusneko.neko.miner.listener.event.HandicapEvent;
 import com.octopusneko.neko.miner.listener.event.MatchListEvent;
-import com.octopusneko.neko.miner.listener.event.OddsEvent;
+import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.Provider;
@@ -10,19 +9,26 @@ import com.octopusneko.neko.miner.schedule.Scheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
 import com.octopusneko.neko.miner.service.RestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+@Component("MatchListListener")
 public class MatchListListener implements ApplicationListener<MatchListEvent> {
 
     @Autowired
-    private ApplicationListener<HandicapEvent> handicapListener;
+    @Qualifier("HandicapListener")
+    private ApplicationListener<ProviderEvent> handicapListener;
 
     @Autowired
-    private ApplicationListener<OddsEvent> oddsListener;
+    @Qualifier("OddsListener")
+    private ApplicationListener<ProviderEvent> oddsListener;
+
+    @Autowired
+    @Qualifier("OverUnderListener")
+    private ApplicationListener<ProviderEvent> overUnderListener;
 
     @Autowired
     private RestService restService;
@@ -49,16 +55,16 @@ public class MatchListListener implements ApplicationListener<MatchListEvent> {
 
     private void downloadHandicapProviders(Match match) {
         List<Provider> providers = restService.downloadHandicapProviders(match);
-        handicapListener.onApplicationEvent(new HandicapEvent(providers));
+        handicapListener.onApplicationEvent(new ProviderEvent(providers));
     }
 
     private void downloadOddsProviders(Match match) {
         List<Provider> providers = restService.downloadOddsProviders(match);
-        oddsListener.onApplicationEvent(new OddsEvent(providers));
+        oddsListener.onApplicationEvent(new ProviderEvent(providers));
     }
 
     private void downloadOverUnderProviders(Match match) {
         List<Provider> providers = restService.downloadOverUnderProviders(match);
-        oddsListener.onApplicationEvent(new OddsEvent(providers));
+        overUnderListener.onApplicationEvent(new ProviderEvent(providers));
     }
 }

@@ -13,9 +13,13 @@ spring:
       settings:
         trace: false
         web-allow-others: false
+rest:
+  connectTimeout: 5000
+  readTimeout: 3000
 
 app:
   schedule:
+    fixDelay: 2000
     fixedRate: '18000'
   match:
     baseUrl: 'https://m.nowscore.com'
@@ -32,12 +36,47 @@ app:
     overUnderDetailPath: '/OuDetail/<matchId>_<providerId>.htm'
 
     handicapProviders:
-      - id: 9
-        name: '威廉希尔'
       - id: 1
         name: '澳门'
-    oddsProviders:
-      - id: 115
+      - id: 3
+        name: 'Crown'
+      - id: 8
+        name: '365'
+      - id: 9
         name: '威廉希尔'
+      - id: 12
+        name: '易胜博'
+      - id: 14
+        name: '伟德'
+
+    oddsProviders:
       - id: 80
         name: '澳门'
+      - id: 545
+        name: 'Crown'
+      - id: 281
+        name: '365'
+      - id: 115
+        name: '威廉希尔'
+      - id: 81
+        name: '易胜博'
+      - id: 90
+        name: '伟德'
+      - id: 82
+        name: '立博'
+
+    overUnderProviders:
+      - id: 1
+        name: '澳门'
+      - id: 3
+        name: 'Crown'
+      - id: 8
+        name: '365'
+      - id: 9
+        name: '威廉希尔'
+      - id: 12
+        name: '易胜博'
+      - id: 14
+        name: '伟德'
+      - id: 4
+        name: '立博'

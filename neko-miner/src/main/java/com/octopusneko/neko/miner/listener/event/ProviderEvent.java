@@ -5,9 +5,9 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.List;
 
-public class HandicapEvent extends ApplicationEvent {
+public class ProviderEvent extends ApplicationEvent {
 
-    public HandicapEvent(List<Provider> leagues) {
+    public ProviderEvent(List<Provider> leagues) {
         super(leagues);
     }
 

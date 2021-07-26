@@ -14,6 +14,8 @@ public class ProviderConfig {
 
     private List<ProviderEntry> oddsProviders;
 
+    private List<ProviderEntry> overUnderProviders;
+
     public List<ProviderEntry> getHandicapProviders() {
         return handicapProviders;
     }
@@ -28,5 +30,13 @@ public class ProviderConfig {
 
     public void setOddsProviders(List<ProviderEntry> oddsProviders) {
         this.oddsProviders = oddsProviders;
+    }
+
+    public List<ProviderEntry> getOverUnderProviders() {
+        return overUnderProviders;
+    }
+
+    public void setOverUnderProviders(List<ProviderEntry> overUnderProviders) {
+        this.overUnderProviders = overUnderProviders;
     }
 }

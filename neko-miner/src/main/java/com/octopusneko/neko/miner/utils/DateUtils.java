@@ -6,7 +6,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DateUtils {
+public final class DateUtils {
+
+    private DateUtils() {
+        
+    }
 
     public static LocalDateTime parseToLocalTime(String localDateTime, String pattern) {
         return LocalDateTime.parse(localDateTime, DateTimeFormatter.ofPattern(pattern));

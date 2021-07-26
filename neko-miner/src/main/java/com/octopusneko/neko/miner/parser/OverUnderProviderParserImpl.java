@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("HandicapProviderParserImpl")
-public class HandicapProviderParserImpl implements IProviderParser {
+@Component("OverUnderProviderParserImpl")
+public class OverUnderProviderParserImpl implements IProviderParser {
 
 
     private static final Pattern REGEX = Pattern.compile("showDetail\\( '[0-9]+' ,'([0-9]+)'\\)");
@@ -26,7 +26,7 @@ public class HandicapProviderParserImpl implements IProviderParser {
         if (ObjectUtils.isEmpty(data)) {
             return Collections.emptyList();
         }
-        Elements trs = Jsoup.parse(data).select("table#hTable > tbody > tr[onclick*=\"showDetail\"]");
+        Elements trs = Jsoup.parse(data).select("table#oTable > tbody > tr[onclick*=\"showDetail\"]");
         List<Provider> providers = new ArrayList<>();
         trs.forEach(tr -> {
             String value = tr.attr("onclick");

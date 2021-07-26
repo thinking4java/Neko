@@ -40,19 +40,25 @@ public class MatchListListener implements ApplicationListener<MatchListEvent> {
         savedLeagueMatches.forEach(league -> {
             List<Match> matchList = league.getMatchList();
             matchList.forEach(match -> {
-                scheduler.schedule(() -> downloadAsianProviders(match));
-                scheduler.schedule(() -> downloadEuroProviders(match));
+                scheduler.schedule(() -> downloadHandicapProviders(match));
+                scheduler.schedule(() -> downloadOddsProviders(match));
+                scheduler.schedule(() -> downloadOverUnderProviders(match));
             });
         });
     }
 
-    private void downloadAsianProviders(Match match) {
-        List<Provider> providers = restService.downloadAsianProviders(match);
+    private void downloadHandicapProviders(Match match) {
+        List<Provider> providers = restService.downloadHandicapProviders(match);
         handicapListener.onApplicationEvent(new HandicapEvent(providers));
     }
 
-    private void downloadEuroProviders(Match match) {
-        List<Provider> providers = restService.downloadEuroProviders(match);
+    private void downloadOddsProviders(Match match) {
+        List<Provider> providers = restService.downloadOddsProviders(match);
+        oddsListener.onApplicationEvent(new OddsEvent(providers));
+    }
+
+    private void downloadOverUnderProviders(Match match) {
+        List<Provider> providers = restService.downloadOverUnderProviders(match);
         oddsListener.onApplicationEvent(new OddsEvent(providers));
     }
 }

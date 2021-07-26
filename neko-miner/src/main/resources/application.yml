@@ -19,12 +19,18 @@ app:
     fixedRate: '18000'
   match:
     baseUrl: 'https://m.nowscore.com'
+
     matchListPath: '/results.htm?date=<date>'
+
     handicapPath: '/Handicap/<matchId>.htm'
     handicapDetailPath: '/HandicapDetail/<matchId>_<providerId>.htm'
-    overUnderDetailPath: '/OuDetail/<matchId>_<providerId>.htm'
-    oddsPath: '/1x2/<placeholder>.htm'
+
+    oddsPath: '/1x2/<matchId>.htm'
     oddsDetailPath: '/1x2Detail/<matchId>_<providerId>.htm'
+
+    overUnderPath: '/OverUnder/<matchId>.htm'
+    overUnderDetailPath: '/OuDetail/<matchId>_<providerId>.htm'
+
     handicapProviders:
       - id: 9
         name: '威廉希尔'

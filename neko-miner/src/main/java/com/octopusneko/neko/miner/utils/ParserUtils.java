@@ -2,7 +2,12 @@ package com.octopusneko.neko.miner.utils;
 
 import org.springframework.util.ObjectUtils;
 
-public class ParserUtils {
+public final class ParserUtils {
+
+    private ParserUtils() {
+
+    }
+
     public static int parseInt(String str) {
         if (ObjectUtils.isEmpty(str)) {
             return -99;

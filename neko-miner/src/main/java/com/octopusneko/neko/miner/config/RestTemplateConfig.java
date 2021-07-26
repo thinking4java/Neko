@@ -61,7 +61,7 @@ class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor
 
     }
 
-    private void logRequestDetails(HttpRequest request) throws IOException {
+    private void logRequestDetails(HttpRequest request) {
         logger.debug("=======================request begin=======================");
         logger.debug("Headers: {}", request.getHeaders());
         logger.debug("Request Method: {}", request.getMethod());

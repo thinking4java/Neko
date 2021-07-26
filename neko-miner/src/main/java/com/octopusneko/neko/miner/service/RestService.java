@@ -22,6 +22,9 @@ import java.util.List;
 @Service
 public class RestService {
 
+    private static final String MATCH_ID_PLACEHOLDER = "<matchId>";
+    private static final String PROVIDER_ID_PLACEHOLDER = "<providerId>";
+
     @Autowired
     private IMatchService matchService;
 
@@ -110,8 +113,8 @@ public class RestService {
         return matchParser.parse(html);
     }
 
-    public List<Provider> downloadHandicapProviders(Match match) {
-        String url = String.format("%s%s", baseUrl, handicapPath.replace("<matchId>", String.valueOf(match.getId())));
+    public List<Provider> downloadHandicapProviders(final Match match) {
+        String url = String.format("%s%s", baseUrl, handicapPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -119,8 +122,8 @@ public class RestService {
         return handicapProviderParser.parse(match, html);
     }
 
-    public List<Provider> downloadOddsProviders(Match match) {
-        String url = String.format("%s%s", baseUrl, oddsPath.replace("<matchId>", String.valueOf(match.getId())));
+    public List<Provider> downloadOddsProviders(final Match match) {
+        String url = String.format("%s%s", baseUrl, oddsPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -130,7 +133,7 @@ public class RestService {
 
 
     public List<Provider> downloadOverUnderProviders(Match match) {
-        String url = String.format("%s%s", baseUrl, overUnderPath.replace("<matchId>", String.valueOf(match.getId())));
+        String url = String.format("%s%s", baseUrl, overUnderPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -141,8 +144,8 @@ public class RestService {
     public List<Handicap> downloadHandicap(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", baseUrl, handicapDetailPath
-                .replace("<matchId>", String.valueOf(providerId.getMatchId())))
-                .replace("<providerId>", String.valueOf(providerId.getCode()));
+                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+                .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -154,8 +157,8 @@ public class RestService {
     public List<Odds> downloadOdds(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", baseUrl, oddsDetailPath
-                .replace("<matchId>", String.valueOf(providerId.getMatchId())))
-                .replace("<providerId>", String.valueOf(providerId.getCode()));
+                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+                .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -167,8 +170,8 @@ public class RestService {
     public List<OverUnder> downloadOverUnder(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", baseUrl, overUnderDetailPath
-                .replace("<matchId>", String.valueOf(providerId.getMatchId())))
-                .replace("<providerId>", String.valueOf(providerId.getCode()));
+                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+                .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();

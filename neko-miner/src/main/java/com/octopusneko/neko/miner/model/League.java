@@ -77,11 +77,7 @@ public class League implements Comparable<League> {
     }
 
     @Override
-    public int compareTo(League o) {
-        return getPriority(id);
-    }
-
-    private int getPriority(Integer id) {
-        return 0; // TODO
+    public int compareTo(League that) {
+        return this.id.compareTo(that.id);
     }
 }

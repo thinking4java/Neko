@@ -44,9 +44,9 @@ public class OddsParserImpl implements IOddsParser {
             Odds odds = new Odds();
             odds.setMatch(match);
             odds.setProviderId(providerId);
-            odds.setHome(ParserUtils.parseFloat(tds.get(0).html()));
-            odds.setDraw(ParserUtils.parseFloat(tds.get(1).html()));
-            odds.setAway(ParserUtils.parseFloat(tds.get(2).html()));
+            odds.setHome(ParserUtils.parseBigDecimal(tds.get(0).html()));
+            odds.setDraw(ParserUtils.parseBigDecimal(tds.get(1).html()));
+            odds.setAway(ParserUtils.parseBigDecimal(tds.get(2).html()));
             String strTime = String.format("%d-%s", match.getMatchTime().getYear(), tds.get(5).text());
             ZonedDateTime updateTime = DateUtils.parseToUTCTime(strTime, "yyyy-MM-dd HH:mm");
             odds.setUpdateTime(updateTime);

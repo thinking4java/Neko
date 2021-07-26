@@ -48,7 +48,7 @@ class HandicapParserImplTest {
         List<Handicap> handicaps = handicapParser.parse(match, 8, table);
         Assertions.assertNotNull(handicaps);
         Assertions.assertEquals(3, handicaps.size());
-        Assertions.assertEquals(-0.75f, handicaps.get(handicaps.size() - 1).getHandicap());
+        Assertions.assertEquals(-0.75f, handicaps.get(handicaps.size() - 1).getHandicap().floatValue());
     }
 
 }

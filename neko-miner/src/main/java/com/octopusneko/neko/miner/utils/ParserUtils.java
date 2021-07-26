@@ -2,6 +2,8 @@ package com.octopusneko.neko.miner.utils;
 
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
+
 public final class ParserUtils {
 
     private ParserUtils() {
@@ -19,14 +21,7 @@ public final class ParserUtils {
         }
     }
 
-    public static float parseFloat(String str) {
-        if (ObjectUtils.isEmpty(str)) {
-            return -99f;
-        }
-        try {
-            return Float.parseFloat(str);
-        } catch (Exception e) {
-            return -99f;
-        }
+    public static BigDecimal parseBigDecimal(String str) {
+        return new BigDecimal(str);
     }
 }

@@ -1,6 +1,7 @@
 package com.octopusneko.neko.miner.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -18,9 +19,9 @@ public class OverUnder {
 
     private int providerId;
 
-    private float home;
-    private float overUnder;
-    private float away;
+    private BigDecimal home;
+    private BigDecimal overUnder;
+    private BigDecimal away;
 
     private ZonedDateTime updateTime;
 
@@ -48,27 +49,27 @@ public class OverUnder {
         this.providerId = providerId;
     }
 
-    public float getHome() {
+    public BigDecimal getHome() {
         return home;
     }
 
-    public void setHome(float home) {
+    public void setHome(BigDecimal home) {
         this.home = home;
     }
 
-    public float getOverUnder() {
+    public BigDecimal getOverUnder() {
         return overUnder;
     }
 
-    public void setOverUnder(float overUnder) {
+    public void setOverUnder(BigDecimal overUnder) {
         this.overUnder = overUnder;
     }
 
-    public float getAway() {
+    public BigDecimal getAway() {
         return away;
     }
 
-    public void setAway(float away) {
+    public void setAway(BigDecimal away) {
         this.away = away;
     }
 

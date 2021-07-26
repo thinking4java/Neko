@@ -214,7 +214,7 @@ class OverUnderParserImplTest {
         List<OverUnder> overUnderList = overUnderParser.parse(match, 8, table);
         Assertions.assertNotNull(overUnderList);
         Assertions.assertEquals(30, overUnderList.size());
-        Assertions.assertEquals(2.5f, overUnderList.get(0).getOverUnder());
-        Assertions.assertEquals(2.25f, overUnderList.get(overUnderList.size() - 1).getOverUnder());
+        Assertions.assertEquals(2.5f, overUnderList.get(0).getOverUnder().floatValue());
+        Assertions.assertEquals(2.25f, overUnderList.get(overUnderList.size() - 1).getOverUnder().floatValue());
     }
 }

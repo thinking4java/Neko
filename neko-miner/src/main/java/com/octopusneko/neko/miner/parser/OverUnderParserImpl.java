@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,9 +42,9 @@ public class OverUnderParserImpl implements IOverUnderParser {
             OverUnder overUnder = new OverUnder();
             overUnder.setMatch(match);
             overUnder.setProviderId(providerId);
-            overUnder.setHome(ParserUtils.parseFloat(tds.get(0).html()));
+            overUnder.setHome(ParserUtils.parseBigDecimal(tds.get(0).html()));
             overUnder.setOverUnder(parseOverUnder(tds.get(1).html()));
-            overUnder.setAway(ParserUtils.parseFloat(tds.get(2).html()));
+            overUnder.setAway(ParserUtils.parseBigDecimal(tds.get(2).html()));
             String strTime = String.format("%d-%s", match.getMatchTime().getYear(), tds.get(3).html());
             ZonedDateTime updateTime = DateUtils.parseToUTCTime(strTime, "yyyy-MM-dd HH:mm");
             overUnder.setUpdateTime(updateTime);
@@ -53,20 +54,20 @@ public class OverUnderParserImpl implements IOverUnderParser {
         throw new IllegalArgumentException("Invalid td elements");
     }
 
-    private static float parseOverUnder(String str) {
+    private static BigDecimal parseOverUnder(String str) {
         if (ObjectUtils.isEmpty(str)) {
-            return -99f;
+            return new BigDecimal(0);
         }
         if (str.contains("/")) {
             String[] split = str.split("/");
             if (split.length >= 2) {
-                float a = ParserUtils.parseFloat(split[0]);
-                float b = ParserUtils.parseFloat(split[1]);
-                boolean negative = a < 0;
-                float value = (Math.abs(a) + b) / 2;
-                return negative ? -value : value;
+                BigDecimal a = ParserUtils.parseBigDecimal(split[0]);
+                BigDecimal b = ParserUtils.parseBigDecimal(split[1]);
+                boolean negative = a.compareTo(new BigDecimal(0)) < 0;
+                BigDecimal value = a.abs().add(b).divide(new BigDecimal(2));
+                return negative ? value.negate() : value;
             }
         }
-        return ParserUtils.parseFloat(str);
+        return ParserUtils.parseBigDecimal(str);
     }
 }

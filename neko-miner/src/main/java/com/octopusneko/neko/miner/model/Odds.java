@@ -1,6 +1,7 @@
 package com.octopusneko.neko.miner.model;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -18,9 +19,9 @@ public class Odds {
 
     private int providerId;
 
-    private float home;
-    private float draw;
-    private float away;
+    private BigDecimal home;
+    private BigDecimal draw;
+    private BigDecimal away;
 
     private ZonedDateTime updateTime;
 
@@ -48,27 +49,27 @@ public class Odds {
         this.providerId = providerId;
     }
 
-    public float getHome() {
+    public BigDecimal getHome() {
         return home;
     }
 
-    public void setHome(float home) {
+    public void setHome(BigDecimal home) {
         this.home = home;
     }
 
-    public float getDraw() {
+    public BigDecimal getDraw() {
         return draw;
     }
 
-    public void setDraw(float draw) {
+    public void setDraw(BigDecimal draw) {
         this.draw = draw;
     }
 
-    public float getAway() {
+    public BigDecimal getAway() {
         return away;
     }
 
-    public void setAway(float away) {
+    public void setAway(BigDecimal away) {
         this.away = away;
     }
 

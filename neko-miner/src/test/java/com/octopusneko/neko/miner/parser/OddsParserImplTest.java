@@ -162,7 +162,7 @@ class OddsParserImplTest {
         List<Odds> oddsList = oddsParser.parse(match, 8, table);
         Assertions.assertNotNull(oddsList);
         Assertions.assertEquals(9, oddsList.size());
-        Assertions.assertEquals(3.40f, oddsList.get(0).getDraw());
-        Assertions.assertEquals(3.20f, oddsList.get(oddsList.size() - 1).getDraw());
+        Assertions.assertEquals(3.40f, oddsList.get(0).getDraw().floatValue());
+        Assertions.assertEquals(3.20f, oddsList.get(oddsList.size() - 1).getDraw().floatValue());
     }
 }

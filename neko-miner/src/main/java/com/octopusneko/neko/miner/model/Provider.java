@@ -35,13 +35,18 @@ public class Provider {
 
         private long matchId;
         private int code;
+        // 0, handicap
+        // 1, odds
+        // 2, over under
+        private int type;
 
         public ProviderId() {
         }
 
-        public ProviderId(long matchId, int code) {
+        public ProviderId(long matchId, int code, int type) {
             this.matchId = matchId;
             this.code = code;
+            this.type = type;
         }
 
         public long getMatchId() {
@@ -50,6 +55,10 @@ public class Provider {
 
         public int getCode() {
             return code;
+        }
+
+        public int getType() {
+            return type;
         }
     }
 

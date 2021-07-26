@@ -48,7 +48,7 @@ public class OddsProviderParserImpl implements IProviderParser {
             JSONObject jsonObject = (JSONObject) item;
             Provider provider = new Provider();
             int providerId = jsonObject.getInt("cId");
-            provider.setProviderId(new Provider.ProviderId(match.getId(), providerId));
+            provider.setProviderId(new Provider.ProviderId(match.getId(), providerId, 1));
             String name = jsonObject.getString("cn");
             provider.setName(name);
             providers.add(provider);

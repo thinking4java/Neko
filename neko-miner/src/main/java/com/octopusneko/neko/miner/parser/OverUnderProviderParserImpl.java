@@ -35,7 +35,7 @@ public class OverUnderProviderParserImpl implements IProviderParser {
                 int providerId = ParserUtils.parseInt(matcher.group(1));
                 String providerName = tr.selectFirst("td").text();
                 Provider provider = new Provider();
-                provider.setProviderId(new Provider.ProviderId(match.getId(), providerId));
+                provider.setProviderId(new Provider.ProviderId(match.getId(), providerId, 2));
                 provider.setName(providerName);
                 providers.add(provider);
             }

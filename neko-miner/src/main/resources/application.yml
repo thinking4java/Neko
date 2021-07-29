@@ -15,7 +15,11 @@ spring:
         web-allow-others: false
 rest:
   connectTimeout: 5000
-  readTimeout: 3000
+  readTimeout: 5000
+
+retry:
+  maxAttempts: 3
+  maxDelay: 200
 
 app:
   schedule:

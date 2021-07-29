@@ -1,20 +1,21 @@
 package com.octopusneko.neko.miner.service;
 
+import com.octopusneko.neko.miner.config.MatchConfig;
 import com.octopusneko.neko.miner.model.*;
 import com.octopusneko.neko.miner.parser.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -28,63 +29,43 @@ public class RestService {
     @Autowired
     private IMatchService matchService;
 
-    @Value("${rest.connectTimeout}")
-    private long connectTimeout;
-
-    @Value("${rest.readTimeout}")
-    private long readTimeout;
-
-    @Value("${app.match.baseUrl}")
-    private String baseUrl;
-
-    @Value("${app.match.matchListPath}")
-    private String matchListPath;
     @Autowired
     private IMatchParser matchParser;
 
     @Autowired
     @Qualifier("HandicapProviderParserImpl")
     private IProviderParser handicapProviderParser;
-    @Value("${app.match.handicapPath}")
-    private String handicapPath;
-
-    @Autowired
-    private IHandicapParser handicapParser;
-    @Value("${app.match.handicapDetailPath}")
-    private String handicapDetailPath;
-
     @Autowired
     @Qualifier("OddsProviderParserImpl")
     private IProviderParser oddsProviderParser;
-    @Value("${app.match.oddsPath}")
-    private String oddsPath;
-
-    @Autowired
-    private IOddsParser oddsParser;
-    @Value("${app.match.oddsDetailPath}")
-    private String oddsDetailPath;
-
     @Autowired
     @Qualifier("OverUnderProviderParserImpl")
     private IProviderParser overUnderProviderParser;
-    @Value("${app.match.overUnderPath}")
-    private String overUnderPath;
 
     @Autowired
+    private IHandicapParser handicapParser;
+    @Autowired
+    private IOddsParser oddsParser;
+    @Autowired
     private IOverUnderParser overUnderParser;
-    @Value("${app.match.overUnderDetailPath}")
-    private String overUnderDetailPath;
 
-    private final RestTemplate restTemplate;
+    @Autowired
+    private MatchConfig matchConfig;
 
-    public RestService(RestTemplateBuilder builder) {
-        this.restTemplate = builder
-                .setConnectTimeout(Duration.ofMillis(connectTimeout))
-                .setReadTimeout(Duration.ofMillis(readTimeout))
-                .build();
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Retryable(value = ResourceAccessException.class, maxAttemptsExpression = "${retry.maxAttempts}",
+            backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
+    private String getHtml(String url) {
+        HttpHeaders headers = fakeHttpHeaders();
+        HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET,
+                httpEntity, String.class);
+        return response.getBody();
     }
 
-    private String getHtml(String url) {
+    private HttpHeaders fakeHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         // fake browser's behavior
         headers.add("authority", "m.nowscore.com");
@@ -99,22 +80,19 @@ public class RestService {
         headers.add("sec-fetch-user", "?1");
         headers.add("sec-fetch-dest", "document");
         headers.add("accept-language", "en-US,en;q=0.9");
-        HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        return response.getBody();
+        return headers;
     }
 
     public List<League> downloadLeagueMatches(LocalDate date) {
-        String url = String.format("%s%s", baseUrl, matchListPath.replace("<date>", date.toString()));
+        String url = String.format("%s%s", matchConfig.getBaseUrl(),
+                matchConfig.getMatchListPath().replace("<date>", date.toString()));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         return matchParser.parse(html);
     }
 
     public List<Provider> downloadHandicapProviders(final Match match) {
-        String url = String.format("%s%s", baseUrl, handicapPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
+        String url = String.format("%s%s", matchConfig.getBaseUrl(),
+                matchConfig.getHandicapPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -123,7 +101,8 @@ public class RestService {
     }
 
     public List<Provider> downloadOddsProviders(final Match match) {
-        String url = String.format("%s%s", baseUrl, oddsPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
+        String url = String.format("%s%s", matchConfig.getBaseUrl(),
+                matchConfig.getOddsPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -133,7 +112,8 @@ public class RestService {
 
 
     public List<Provider> downloadOverUnderProviders(Match match) {
-        String url = String.format("%s%s", baseUrl, overUnderPath.replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
+        String url = String.format("%s%s", matchConfig.getBaseUrl(),
+                matchConfig.getOverUnderPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
             return Collections.emptyList();
@@ -143,8 +123,9 @@ public class RestService {
 
     public List<Handicap> downloadHandicap(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
-        String url = String.format("%s%s", baseUrl, handicapDetailPath
-                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+        String url = String.format("%s%s", matchConfig.getBaseUrl()
+                , matchConfig.getHandicapDetailPath()
+                        .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
@@ -156,8 +137,9 @@ public class RestService {
 
     public List<Odds> downloadOdds(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
-        String url = String.format("%s%s", baseUrl, oddsDetailPath
-                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+        String url = String.format("%s%s", matchConfig.getBaseUrl()
+                , matchConfig.getOddsDetailPath()
+                        .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {
@@ -169,8 +151,9 @@ public class RestService {
 
     public List<OverUnder> downloadOverUnder(Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
-        String url = String.format("%s%s", baseUrl, overUnderDetailPath
-                .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
+        String url = String.format("%s%s", matchConfig.getBaseUrl()
+                , matchConfig.getOverUnderDetailPath()
+                        .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
         if (ObjectUtils.isEmpty(html)) {

@@ -1,6 +1,6 @@
 package com.octopusneko.neko.miner.listener;
 
-import com.octopusneko.neko.miner.config.ProviderConfig;
+import com.octopusneko.neko.miner.config.MatchConfig;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.Odds;
 import com.octopusneko.neko.miner.model.Provider;
@@ -22,7 +22,7 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
     private IMatchService matchService;
 
     @Autowired
-    private ProviderConfig providerConfig;
+    private MatchConfig matchConfig;
 
     @Autowired
     private Scheduler scheduler;
@@ -32,7 +32,7 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
 
     @Override
     public void onApplicationEvent(ProviderEvent event) {
-        List<Integer> oddProviderIds = providerConfig.getOddsProviders().stream()
+        List<Integer> oddProviderIds = matchConfig.getOddsProviders().stream()
                 .map(ProviderEntry::getId)
                 .collect(Collectors.toList());
         List<Provider> filteredProviders = event.getProviders().stream()

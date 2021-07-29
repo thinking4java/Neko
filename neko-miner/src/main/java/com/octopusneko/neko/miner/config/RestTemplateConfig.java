@@ -2,6 +2,7 @@ package com.octopusneko.neko.miner.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Configuration
 public class RestTemplateConfig {
@@ -25,8 +27,16 @@ public class RestTemplateConfig {
 
     @Bean
     @DependsOn(value = {"customRestTemplateCustomizer"})
-    public RestTemplateBuilder restTemplateBuilder() {
-        return new RestTemplateBuilder(customRestTemplateCustomizer());
+    public RestTemplateBuilder restTemplateBuilder(RestConfig restConfig) {
+        return new RestTemplateBuilder(customRestTemplateCustomizer())
+                .setConnectTimeout(Duration.ofMillis(restConfig.getConnectTimeout()))
+                .setReadTimeout(Duration.ofMillis(restConfig.getReadTimeout()));
+    }
+
+    @Bean
+    @DependsOn(value = "restTemplateBuilder")
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder.build();
     }
 }
 

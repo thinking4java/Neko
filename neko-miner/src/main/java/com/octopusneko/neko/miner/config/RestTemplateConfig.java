@@ -2,7 +2,6 @@ package com.octopusneko.neko.miner.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +18,8 @@ import java.time.Duration;
 
 @Configuration
 public class RestTemplateConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(RestTemplateConfig.class);
 
     @Bean
     public CustomRestTemplateCustomizer customRestTemplateCustomizer() {
@@ -38,44 +39,43 @@ public class RestTemplateConfig {
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder.build();
     }
-}
 
-class CustomRestTemplateCustomizer implements RestTemplateCustomizer {
-    @Override
-    public void customize(RestTemplate restTemplate) {
-        restTemplate.getInterceptors().add(new CustomClientHttpRequestInterceptor());
-    }
-}
-
-class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
-
-    private static final Logger logger = LoggerFactory.getLogger(CustomClientHttpRequestInterceptor.class);
-
-    @Override
-    public ClientHttpResponse intercept(
-            HttpRequest request, byte[] body,
-            ClientHttpRequestExecution execution) throws IOException {
-
-        logRequestDetails(request);
-        ClientHttpResponse response = execution.execute(request, body);
-        logResponseDetails(response);
-        return response;
+    static class CustomRestTemplateCustomizer implements RestTemplateCustomizer {
+        @Override
+        public void customize(RestTemplate restTemplate) {
+            restTemplate.getInterceptors().add(new CustomClientHttpRequestInterceptor());
+        }
     }
 
-    private void logResponseDetails(ClientHttpResponse response) throws IOException {
-        logger.debug("=======================response begin=======================");
-        logger.debug("Status code  : {}", response.getStatusCode());
-        logger.debug("Status text  : {}", response.getStatusText());
-        logger.debug("Headers      : {}", response.getHeaders());
-        logger.debug("=======================response   end=======================");
+    static class CustomClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
+        @Override
+        public ClientHttpResponse intercept(
+                HttpRequest request, byte[] body,
+                ClientHttpRequestExecution execution) throws IOException {
+
+            logRequestDetails(request);
+            ClientHttpResponse response = execution.execute(request, body);
+            logResponseDetails(response);
+            return response;
+        }
+
+        private void logResponseDetails(ClientHttpResponse response) throws IOException {
+            logger.debug("=======================response begin=======================");
+            logger.debug("Status code  : {}", response.getStatusCode());
+            logger.debug("Status text  : {}", response.getStatusText());
+            logger.debug("Headers      : {}", response.getHeaders());
+            logger.debug("=======================response   end=======================");
+
+        }
+
+        private void logRequestDetails(HttpRequest request) {
+            logger.debug("=======================request begin=======================");
+            logger.debug("Headers: {}", request.getHeaders());
+            logger.debug("Request Method: {}", request.getMethod());
+            logger.debug("Request URI: {}", request.getURI());
+            logger.debug("=======================request   end=======================");
+        }
     }
 
-    private void logRequestDetails(HttpRequest request) {
-        logger.debug("=======================request begin=======================");
-        logger.debug("Headers: {}", request.getHeaders());
-        logger.debug("Request Method: {}", request.getMethod());
-        logger.debug("Request URI: {}", request.getURI());
-        logger.debug("=======================request   end=======================");
-    }
 }

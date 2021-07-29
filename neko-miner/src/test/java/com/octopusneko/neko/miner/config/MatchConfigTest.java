@@ -1,11 +1,15 @@
 package com.octopusneko.neko.miner.config;
 
+import com.octopusneko.neko.miner.schedule.Scheduler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -16,6 +20,9 @@ class MatchConfigTest {
 
     @Autowired
     private MatchConfig config;
+
+    @MockBean
+    private Scheduler Scheduler;
 
     @Test
     void testLoadConfig() {

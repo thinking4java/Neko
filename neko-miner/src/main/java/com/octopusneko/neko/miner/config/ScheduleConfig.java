@@ -2,10 +2,12 @@ package com.octopusneko.neko.miner.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
-public class ThreadPoolTaskSchedulerConfig {
+@EnableScheduling
+public class ScheduleConfig {
 
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
@@ -14,4 +16,5 @@ public class ThreadPoolTaskSchedulerConfig {
         scheduler.setThreadNamePrefix("scheduler");
         return scheduler;
     }
+
 }

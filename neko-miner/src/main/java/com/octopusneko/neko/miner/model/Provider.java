@@ -80,7 +80,7 @@ public class Provider {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Provider provider = (Provider) o;
-        return name.equals(provider.name);
+        return Objects.equals(providerId, provider.providerId) && Objects.equals(name, provider.name);
     }
 
     @Override

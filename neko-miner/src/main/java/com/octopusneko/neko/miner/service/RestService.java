@@ -12,12 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -94,9 +92,6 @@ public class RestService {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getHandicapPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         return handicapProviderParser.parse(match, html);
     }
 
@@ -104,9 +99,6 @@ public class RestService {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getOddsPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         return oddsProviderParser.parse(match, html);
     }
 
@@ -115,9 +107,6 @@ public class RestService {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getOverUnderPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         return overUnderProviderParser.parse(match, html);
     }
 
@@ -128,9 +117,6 @@ public class RestService {
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         Match match = matchService.findMatchById(providerId.getMatchId());
         return handicapParser.parse(match, providerId.getCode(), html);
     }
@@ -142,9 +128,6 @@ public class RestService {
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         Match match = matchService.findMatchById(providerId.getMatchId());
         return oddsParser.parse(match, providerId.getCode(), html);
     }
@@ -156,9 +139,6 @@ public class RestService {
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getHtml(url);
-        if (ObjectUtils.isEmpty(html)) {
-            return Collections.emptyList();
-        }
         Match match = matchService.findMatchById(providerId.getMatchId());
         return overUnderParser.parse(match, providerId.getCode(), html);
     }

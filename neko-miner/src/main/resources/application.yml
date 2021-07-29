@@ -6,6 +6,7 @@ spring:
     password: changeme
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
   h2:
     console:
       enabled: true
@@ -23,8 +24,7 @@ retry:
 
 app:
   schedule:
-    fixDelay: 2000
-    fixedRate: '18000'
+    fixedRate: '5000'
   match:
     baseUrl: 'https://m.nowscore.com'
 

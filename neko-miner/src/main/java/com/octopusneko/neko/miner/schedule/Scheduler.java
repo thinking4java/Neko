@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 @Component
 public class Scheduler {
 
-    @Value("${app.schedule.fixDelay}")
+    @Value("${app.schedule.fixDelay:2000}")
     private long fixDelay;
 
     @Autowired

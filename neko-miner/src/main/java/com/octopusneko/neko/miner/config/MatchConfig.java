@@ -12,16 +12,16 @@ public class MatchConfig {
 
     private String baseUrl = "https://m.nowscore.com";
 
-    private String matchListPath = "/results.htm?date=<date>";
+    private String matchListPath;
 
-    private String handicapPath = "/Handicap/<matchId>.htm";
-    private String handicapDetailPath = "/HandicapDetail/<matchId>_<providerId>.htm";
+    private String handicapPath;
+    private String handicapDetailPath;
 
-    private String oddsPath = "/1x2/<matchId>.htm";
-    private String oddsDetailPath = "/1x2Detail/<matchId>_<providerId>.htm";
+    private String oddsPath;
+    private String oddsDetailPath;
 
-    private String overUnderPath = "/OverUnder/<matchId>.htm";
-    private String overUnderDetailPath = "/OuDetail/<matchId>_<providerId>.htm";
+    private String overUnderPath;
+    private String overUnderDetailPath;
 
 
     private List<ProviderEntry> handicapProviders;

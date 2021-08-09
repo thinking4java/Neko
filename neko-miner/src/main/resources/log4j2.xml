@@ -28,7 +28,7 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
-        <Logger name="com.octopusneko.neko.miner" level="info"/>
+        <Logger name="com.octopusneko.neko.miner" level="debug"/>
     </Loggers>
 
 </Configuration>

@@ -11,12 +11,9 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
-@EnableRetry
 @EnableConfigurationProperties(value = {MatchConfig.class, RestConfig.class})
 public class AppConfig {
-
     private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
-
     @Bean
     public ApplicationListener<ContextClosedEvent> earlyTaskSchedulerShutdown(ThreadPoolTaskScheduler taskScheduler) {
         return event -> {
@@ -24,5 +21,4 @@ public class AppConfig {
             taskScheduler.shutdown();
         };
     }
-
 }

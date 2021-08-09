@@ -1,6 +1,6 @@
 package com.octopusneko.neko.miner;
 
-import com.octopusneko.neko.miner.schedule.Scheduler;
+import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class NekoMinerApplicationTests {
     private IMatchService matchService;
 
     @MockBean
-    private Scheduler Scheduler;
+    private JobScheduler JobScheduler;
 
     @Test
     void contextLoads() {

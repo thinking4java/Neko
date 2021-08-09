@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class RestServiceTest {
+class RestServiceImplTest {
 
     @Mock
     private IMatchParser matchParser;
@@ -52,7 +52,7 @@ class RestServiceTest {
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private RestService restService;
+    private RestServiceImpl restService;
 
     private HttpHeaders fakeHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();

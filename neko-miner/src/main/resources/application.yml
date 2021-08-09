@@ -24,7 +24,12 @@ retry:
 
 app:
   schedule:
-    fixedRate: '5000'
+    poolSize: 1
+    fixedRateString: '180000'
+  job:
+    minDelay: 2000
+    maxDelay: 5000
+    poolSize: 8
   match:
     baseUrl: 'https://m.nowscore.com'
 

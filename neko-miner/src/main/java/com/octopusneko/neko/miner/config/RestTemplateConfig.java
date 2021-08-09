@@ -55,27 +55,22 @@ public class RestTemplateConfig {
                 ClientHttpRequestExecution execution) throws IOException {
 
             logRequestDetails(request);
+            long start = System.nanoTime();
             ClientHttpResponse response = execution.execute(request, body);
+            logger.debug("Request spent time: {}", (System.nanoTime() - start) / 1e+9);
             logResponseDetails(response);
             return response;
         }
 
-        private void logResponseDetails(ClientHttpResponse response) throws IOException {
-            logger.debug("=======================response begin=======================");
-            logger.debug("Status code  : {}", response.getStatusCode());
-            logger.debug("Status text  : {}", response.getStatusText());
-            logger.debug("Headers      : {}", response.getHeaders());
-            logger.debug("=======================response   end=======================");
-
+        private void logRequestDetails(HttpRequest request) {
+            logger.debug("Request URI: {}", request.getURI());
+            logger.trace("Request Headers: {}", request.getHeaders());
+            logger.trace("Request Method: {}", request.getMethod());
         }
 
-        private void logRequestDetails(HttpRequest request) {
-            logger.debug("=======================request begin=======================");
-            logger.debug("Headers: {}", request.getHeaders());
-            logger.debug("Request Method: {}", request.getMethod());
-            logger.debug("Request URI: {}", request.getURI());
-            logger.debug("=======================request   end=======================");
+        private void logResponseDetails(ClientHttpResponse response) throws IOException {
+            logger.trace("Response Headers: {}", response.getHeaders());
+            logger.debug("Response Status: {}", response.getStatusCode());
         }
     }
-
 }

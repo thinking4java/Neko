@@ -5,9 +5,9 @@ import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.Provider;
-import com.octopusneko.neko.miner.schedule.Scheduler;
+import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
-import com.octopusneko.neko.miner.service.RestService;
+import com.octopusneko.neko.miner.service.IRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
@@ -31,10 +31,10 @@ public class MatchListListener implements ApplicationListener<MatchListEvent> {
     private ApplicationListener<ProviderEvent> overUnderListener;
 
     @Autowired
-    private RestService restService;
+    private IRestService restService;
 
     @Autowired
-    private Scheduler scheduler;
+    private JobScheduler jobScheduler;
 
     @Autowired
     private IMatchService matchService;
@@ -46,9 +46,9 @@ public class MatchListListener implements ApplicationListener<MatchListEvent> {
         savedLeagueMatches.forEach(league -> {
             List<Match> matchList = league.getMatchList();
             matchList.forEach(match -> {
-                scheduler.schedule(() -> downloadHandicapProviders(match));
-                scheduler.schedule(() -> downloadOddsProviders(match));
-                scheduler.schedule(() -> downloadOverUnderProviders(match));
+                jobScheduler.schedule(() -> downloadHandicapProviders(match));
+                jobScheduler.schedule(() -> downloadOddsProviders(match));
+                jobScheduler.schedule(() -> downloadOverUnderProviders(match));
             });
         });
     }

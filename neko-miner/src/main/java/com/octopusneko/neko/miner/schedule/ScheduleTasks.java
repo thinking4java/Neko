@@ -2,10 +2,12 @@ package com.octopusneko.neko.miner.schedule;
 
 import com.octopusneko.neko.miner.listener.event.MatchListEvent;
 import com.octopusneko.neko.miner.model.League;
-import com.octopusneko.neko.miner.service.RestService;
+import com.octopusneko.neko.miner.service.IRestService;
+import com.octopusneko.neko.miner.service.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +24,10 @@ public class ScheduleTasks {
     private ApplicationListener<MatchListEvent> applicationListener;
 
     @Autowired
-    private RestService restService;
+    private IRestService restService;
 
-    @Scheduled(fixedRateString = "${app.schedule.fixedRate}")
+    @Async("threadPoolTaskScheduler")
+    @Scheduled(fixedRateString = "${app.schedule.fixedRateString:180000}")
     public void updateMatch() {
         LocalDate currDate = LocalDate.now();
         LocalDateTime currDateTenOClock = LocalDateTime.of(currDate, LocalTime.of(10, 0));

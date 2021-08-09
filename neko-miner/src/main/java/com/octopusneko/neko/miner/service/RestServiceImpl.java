@@ -9,17 +9,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class RestService {
+public class RestServiceImpl implements IRestService {
 
     private static final String MATCH_ID_PLACEHOLDER = "<matchId>";
     private static final String PROVIDER_ID_PLACEHOLDER = "<providerId>";
@@ -53,13 +50,10 @@ public class RestService {
     @Autowired
     RestTemplate restTemplate;
 
-    @Retryable(value = ResourceAccessException.class, maxAttemptsExpression = "${retry.maxAttempts}",
-            backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
-    private String getHtml(String url) {
+    public String getString(String url) {
         HttpHeaders headers = fakeHttpHeaders();
         HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET,
-                httpEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
         return response.getBody();
     }
 
@@ -84,61 +78,61 @@ public class RestService {
     public List<League> downloadLeagueMatches(LocalDate date) {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getMatchListPath().replace("<date>", date.toString()));
-        String html = getHtml(url);
+        String html = getString(url);
         return matchParser.parse(html);
     }
 
     public List<Provider> downloadHandicapProviders(final Match match) {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getHandicapPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
-        String html = getHtml(url);
+        String html = getString(url);
         return handicapProviderParser.parse(match, html);
     }
 
     public List<Provider> downloadOddsProviders(final Match match) {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getOddsPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
-        String html = getHtml(url);
+        String html = getString(url);
         return oddsProviderParser.parse(match, html);
     }
 
 
-    public List<Provider> downloadOverUnderProviders(Match match) {
+    public List<Provider> downloadOverUnderProviders(final Match match) {
         String url = String.format("%s%s", matchConfig.getBaseUrl(),
                 matchConfig.getOverUnderPath().replace(MATCH_ID_PLACEHOLDER, String.valueOf(match.getId())));
-        String html = getHtml(url);
+        String html = getString(url);
         return overUnderProviderParser.parse(match, html);
     }
 
-    public List<Handicap> downloadHandicap(Provider provider) {
+    public List<Handicap> downloadHandicap(final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getHandicapDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
-        String html = getHtml(url);
+        String html = getString(url);
         Match match = matchService.findMatchById(providerId.getMatchId());
         return handicapParser.parse(match, providerId.getCode(), html);
     }
 
-    public List<Odds> downloadOdds(Provider provider) {
+    public List<Odds> downloadOdds(final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getOddsDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
-        String html = getHtml(url);
+        String html = getString(url);
         Match match = matchService.findMatchById(providerId.getMatchId());
         return oddsParser.parse(match, providerId.getCode(), html);
     }
 
-    public List<OverUnder> downloadOverUnder(Provider provider) {
+    public List<OverUnder> downloadOverUnder(final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getOverUnderDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
-        String html = getHtml(url);
+        String html = getString(url);
         Match match = matchService.findMatchById(providerId.getMatchId());
         return overUnderParser.parse(match, providerId.getCode(), html);
     }

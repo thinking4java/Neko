@@ -52,7 +52,7 @@ public class JobScheduler {
         workQueue.add(job);
     }
 
-    private static long getRandomRangeDelay(long minDelay, long maxDelay) {
+    private long getRandomRangeDelay(long minDelay, long maxDelay) {
         return new Random().longs(minDelay, maxDelay).findFirst().orElseThrow(() -> new IllegalArgumentException("Invalid range between " + minDelay + " and " + maxDelay));
     }
 

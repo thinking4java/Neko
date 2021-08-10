@@ -1,6 +1,6 @@
 package com.octopusneko.neko.miner.config;
 
-import com.octopusneko.neko.miner.payload.ProviderEntry;
+import com.octopusneko.neko.miner.payload.Entry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app.match")
 public class MatchConfig {
 
-    private String baseUrl = "https://m.nowscore.com";
+    private String baseUrl;
 
     private String matchListPath;
 
@@ -23,10 +23,11 @@ public class MatchConfig {
     private String overUnderPath;
     private String overUnderDetailPath;
 
+    private List<Entry> hotLeagues;
 
-    private List<ProviderEntry> handicapProviders;
-    private List<ProviderEntry> oddsProviders;
-    private List<ProviderEntry> overUnderProviders;
+    private List<Entry> handicapProviders;
+    private List<Entry> oddsProviders;
+    private List<Entry> overUnderProviders;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -92,27 +93,35 @@ public class MatchConfig {
         this.overUnderDetailPath = overUnderDetailPath;
     }
 
-    public List<ProviderEntry> getHandicapProviders() {
+    public List<Entry> getHandicapProviders() {
         return handicapProviders;
     }
 
-    public void setHandicapProviders(List<ProviderEntry> handicapProviders) {
+    public void setHandicapProviders(List<Entry> handicapProviders) {
         this.handicapProviders = handicapProviders;
     }
 
-    public List<ProviderEntry> getOddsProviders() {
+    public List<Entry> getOddsProviders() {
         return oddsProviders;
     }
 
-    public void setOddsProviders(List<ProviderEntry> oddsProviders) {
+    public void setOddsProviders(List<Entry> oddsProviders) {
         this.oddsProviders = oddsProviders;
     }
 
-    public List<ProviderEntry> getOverUnderProviders() {
+    public List<Entry> getOverUnderProviders() {
         return overUnderProviders;
     }
 
-    public void setOverUnderProviders(List<ProviderEntry> overUnderProviders) {
+    public void setOverUnderProviders(List<Entry> overUnderProviders) {
         this.overUnderProviders = overUnderProviders;
+    }
+
+    public List<Entry> getHotLeagues() {
+        return hotLeagues;
+    }
+
+    public void setHotLeagues(List<Entry> hotLeagues) {
+        this.hotLeagues = hotLeagues;
     }
 }

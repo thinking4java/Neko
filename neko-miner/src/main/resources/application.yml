@@ -25,11 +25,13 @@ retry:
 app:
   schedule:
     poolSize: 1
-    fixedRateString: '180000'
+    updateMatchFixedRate: '180000'
+    dumpJobFixedRate: '300000'
   job:
-    minDelay: 500
-    maxDelay: 1000
     poolSize: 8
+    queueSize: 100
+    minDelay: 100
+    maxDelay: 1000
   match:
     baseUrl: 'https://m.nowscore.com'
 
@@ -43,6 +45,66 @@ app:
 
     overUnderPath: '/OverUnder/<matchId>.htm'
     overUnderDetailPath: '/OuDetail/<matchId>_<providerId>.htm'
+
+    hotLeagues:
+      - id: 36
+        name: '英超'
+      - id: 37
+        name: '英冠'
+      - id: 31
+        name: '西甲'
+      - id: 8
+        name: '德甲'
+      - id: 9
+        name: '德乙'
+      - id: 34
+        name: '意甲'
+      - id: 11
+        name: '法甲'
+      - id: 25
+        name: '日职联'
+      - id: 284
+        name: '日职乙'
+      - id: 15
+        name: '韩K联'
+      - id: 273
+        name: '澳洲甲'
+      - id: 23
+        name: '葡超'
+      - id: 22
+        name: '挪超'
+      - id: 16
+        name: '荷甲'
+      - id: 5
+        name: '比甲'
+      - id: 26
+        name: '瑞超'
+      - id: 10
+        name: '俄超'
+      - id: 29
+        name: '苏超'
+      - id: 60
+        name: '中超'
+      - id: 61
+        name: '中甲'
+      - id: 650
+        name: '世欧预'
+      - id: 648
+        name: '世亚预'
+      - id: 652
+        name: '世南美预'
+      - id: 75
+        name: '世界杯'
+      - id: 67
+        name: '欧洲杯'
+      - id: 1864
+        name: '欧国联'
+      - id: 103
+        name: '欧冠杯'
+      - id: 113
+        name: '欧联杯'
+      - id: 192
+        name: '亚冠杯'
 
     handicapProviders:
       - id: 1

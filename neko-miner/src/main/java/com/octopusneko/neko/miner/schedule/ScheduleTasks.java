@@ -25,8 +25,11 @@ public class ScheduleTasks {
     @Autowired
     private IRestService restService;
 
+    @Autowired
+    private JobScheduler jobScheduler;
+
     @Async("threadPoolTaskScheduler")
-    @Scheduled(fixedRateString = "${app.schedule.fixedRateString:180000}")
+    @Scheduled(fixedRateString = "${app.schedule.updateMatchFixedRate:180000}")
     public void updateMatch() {
         LocalDate currDate = LocalDate.now();
         LocalDateTime currDateTenOClock = LocalDateTime.of(currDate, LocalTime.of(10, 0));
@@ -38,5 +41,11 @@ public class ScheduleTasks {
 
     private List<League> downloadLeagueMatches(LocalDate date) {
         return restService.downloadLeagueMatches(date);
+    }
+
+    @Async("threadPoolTaskScheduler")
+    @Scheduled(fixedRateString = "${app.schedule.dumpJobFixedRate:300000}")
+    public void dumpJob() {
+        jobScheduler.dump();
     }
 }

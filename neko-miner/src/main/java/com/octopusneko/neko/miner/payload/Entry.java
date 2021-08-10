@@ -1,6 +1,6 @@
 package com.octopusneko.neko.miner.payload;
 
-public class ProviderEntry {
+public class Entry {
     private int id;
     private String name;
 

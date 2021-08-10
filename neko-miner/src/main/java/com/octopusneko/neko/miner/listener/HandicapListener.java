@@ -5,7 +5,7 @@ import com.octopusneko.neko.miner.job.HandicapJob;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.Provider;
-import com.octopusneko.neko.miner.payload.ProviderEntry;
+import com.octopusneko.neko.miner.payload.Entry;
 import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +33,22 @@ public class HandicapListener implements ApplicationListener<ProviderEvent> {
 
     @Override
     public void onApplicationEvent(ProviderEvent event) {
-        List<Integer> handicapProviderIds = matchConfig.getHandicapProviders().stream()
-                .map(ProviderEntry::getId)
-                .collect(Collectors.toList());
-        List<Provider> filteredProviders = event.getProviders().stream()
-                .filter(provider -> handicapProviderIds.contains(provider.getProviderId().getCode()))
-                .collect(Collectors.toList());
+        List<Provider> providers = event.getProviders();
+        List<Provider> filteredProviders = getFilteredProviders(providers);
         List<Provider> savedProviders = matchService.saveProviders(filteredProviders);
         Match match = event.getMatch();
         savedProviders.forEach(provider -> {
             HandicapJob handicapJob = applicationContext.getBean(HandicapJob.class, match, provider);
             jobScheduler.schedule(handicapJob);
         });
+    }
+
+    private List<Provider> getFilteredProviders(List<Provider> providers) {
+        List<Integer> handicapProviderIds = matchConfig.getHandicapProviders().stream()
+                .map(Entry::getId)
+                .collect(Collectors.toList());
+        return providers.stream()
+                .filter(provider -> handicapProviderIds.contains(provider.getProviderId().getCode()))
+                .collect(Collectors.toList());
     }
 }

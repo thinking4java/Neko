@@ -4,12 +4,10 @@ import com.octopusneko.neko.miner.config.MatchConfig;
 import com.octopusneko.neko.miner.job.OddsJob;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.Match;
-import com.octopusneko.neko.miner.model.Odds;
 import com.octopusneko.neko.miner.model.Provider;
-import com.octopusneko.neko.miner.payload.ProviderEntry;
+import com.octopusneko.neko.miner.payload.Entry;
 import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
-import com.octopusneko.neko.miner.service.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -31,22 +29,23 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
     private JobScheduler jobScheduler;
 
     @Autowired
-    private RestServiceImpl restService;
-
-    @Autowired
     private ApplicationContext applicationContext;
 
     @Override
     public void onApplicationEvent(ProviderEvent event) {
-        List<Integer> oddProviderIds = matchConfig.getOddsProviders().stream()
-                .map(ProviderEntry::getId)
-                .collect(Collectors.toList());
-        List<Provider> filteredProviders = event.getProviders().stream()
-                .filter(provider -> oddProviderIds.contains(provider.getProviderId().getCode()))
-                .collect(Collectors.toList());
-
+        List<Provider> providers = event.getProviders();
+        List<Provider> filteredProviders = getFilteredProviders(providers);
         List<Provider> savedProviders = matchService.saveProviders(filteredProviders);
         Match match = event.getMatch();
         savedProviders.forEach(provider -> jobScheduler.schedule(applicationContext.getBean(OddsJob.class, match, provider)));
+    }
+
+    private List<Provider> getFilteredProviders(List<Provider> providers) {
+        List<Integer> oddProviderIds = matchConfig.getOddsProviders().stream()
+                .map(Entry::getId)
+                .collect(Collectors.toList());
+        return providers.stream()
+                .filter(provider -> oddProviderIds.contains(provider.getProviderId().getCode()))
+                .collect(Collectors.toList());
     }
 }

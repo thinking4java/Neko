@@ -16,7 +16,7 @@ public class AppConfig {
     @Bean
     public ApplicationListener<ContextClosedEvent> earlyTaskSchedulerShutdown(ThreadPoolTaskScheduler taskScheduler) {
         return event -> {
-            logger.debug("@@@@@@@@@@@@@@@@@@@shutdown task scheduler@@@@@@@@@@@@@@@@22");
+            logger.debug("=====================shutdown task scheduler=====================");
             taskScheduler.shutdown();
         };
     }

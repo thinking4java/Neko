@@ -110,8 +110,8 @@ public class MatchParserImpl implements IMatchParser {
             match.setHomeGoals(ParserUtils.parseInt(splits[7]));
             match.setAwayGoals(ParserUtils.parseInt(splits[8]));
 
-            match.setHomeHalfGoals(ParserUtils.parseInt(splits[9]));
-            match.setAwayHalfGoals(ParserUtils.parseInt(splits[10]));
+            match.setHomeHalfGoals((ObjectUtils.isEmpty(splits[9]) && match.getState().compareTo(MatchState.HALF_TIME) <= 0)  ? match.getHomeGoals() : ParserUtils.parseInt(splits[9]));
+            match.setAwayHalfGoals((ObjectUtils.isEmpty(splits[10]) && match.getState().compareTo(MatchState.HALF_TIME) <= 0)  ? match.getHomeGoals() : ParserUtils.parseInt(splits[10]));
 
             match.setHomeRedCards(ParserUtils.parseInt(splits[11]));
             match.setAwayRedCards(ParserUtils.parseInt(splits[12]));

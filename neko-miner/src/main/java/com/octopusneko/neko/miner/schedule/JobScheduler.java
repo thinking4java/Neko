@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Component
@@ -25,20 +23,25 @@ public class JobScheduler {
 
     private final AtomicBoolean running = new AtomicBoolean(true);
 
+    private final AtomicLong counter = new AtomicLong(0);
+
     public JobScheduler(@Value("${app.job.poolSize: 2}") int poolSize
+            , @Value("${app.job.queueSize:100}") int queueSize
             , @Value("${app.job.minDelay:2000}") long minDelay
             , @Value("${app.job.maxDelay:5000}") long maxDelay) {
         workThreadPool = Executors.newFixedThreadPool(poolSize);
-        workQueue = new LinkedBlockingQueue<>();
+        workQueue = new ArrayBlockingQueue<>(queueSize);
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 while (running.get()) {
                     long randomFixedDelay = getRandomRangeDelay(minDelay, maxDelay);
                     logger.trace("Random fixed delay {}", randomFixedDelay);
                     Thread.sleep(randomFixedDelay);
-                    workThreadPool.submit(workQueue.take());
+                    Future<?> future = workThreadPool.submit(workQueue.take());
+                    future.get();
+                    counter.decrementAndGet();
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 logger.error("Failed to take from work queue", e);
                 Thread.currentThread().interrupt();
             }
@@ -46,7 +49,9 @@ public class JobScheduler {
     }
 
     public void schedule(Job job) {
-        workQueue.add(job);
+        if(workQueue.offer(job)) {
+            counter.incrementAndGet();
+        }
     }
 
     private long getRandomRangeDelay(long minDelay, long maxDelay) {
@@ -54,7 +59,9 @@ public class JobScheduler {
     }
 
     public void dump() {
-
+        logger.debug("========================================");
+        logger.debug("Currently job queue size: {}", counter.get());
+        logger.debug("========================================");
     }
 
 }

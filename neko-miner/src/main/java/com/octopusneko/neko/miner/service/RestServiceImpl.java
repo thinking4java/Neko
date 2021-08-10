@@ -22,9 +22,6 @@ public class RestServiceImpl implements IRestService {
     private static final String PROVIDER_ID_PLACEHOLDER = "<providerId>";
 
     @Autowired
-    private IMatchService matchService;
-
-    @Autowired
     private IMatchParser matchParser;
 
     @Autowired
@@ -104,36 +101,33 @@ public class RestServiceImpl implements IRestService {
         return overUnderProviderParser.parse(match, html);
     }
 
-    public List<Handicap> downloadHandicap(final Provider provider) {
+    public List<Handicap> downloadHandicap(final Match match, final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getHandicapDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getString(url);
-        Match match = matchService.findMatchById(providerId.getMatchId());
         return handicapParser.parse(match, providerId.getCode(), html);
     }
 
-    public List<Odds> downloadOdds(final Provider provider) {
+    public List<Odds> downloadOdds(final Match match, final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getOddsDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getString(url);
-        Match match = matchService.findMatchById(providerId.getMatchId());
         return oddsParser.parse(match, providerId.getCode(), html);
     }
 
-    public List<OverUnder> downloadOverUnder(final Provider provider) {
+    public List<OverUnder> downloadOverUnder(final Match match, final Provider provider) {
         Provider.ProviderId providerId = provider.getProviderId();
         String url = String.format("%s%s", matchConfig.getBaseUrl()
                 , matchConfig.getOverUnderDetailPath()
                         .replace(MATCH_ID_PLACEHOLDER, String.valueOf(providerId.getMatchId())))
                 .replace(PROVIDER_ID_PLACEHOLDER, String.valueOf(providerId.getCode()));
         String html = getString(url);
-        Match match = matchService.findMatchById(providerId.getMatchId());
         return overUnderParser.parse(match, providerId.getCode(), html);
     }
 }

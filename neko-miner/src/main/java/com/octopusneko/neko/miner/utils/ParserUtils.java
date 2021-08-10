@@ -15,7 +15,7 @@ public final class ParserUtils {
             return -99;
         }
         try {
-            return Integer.parseInt(str);
+            return Integer.parseInt(str.trim());
         } catch (Exception e) {
             return -99;
         }

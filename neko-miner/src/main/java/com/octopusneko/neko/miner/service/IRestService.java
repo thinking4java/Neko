@@ -18,11 +18,11 @@ public interface IRestService {
 
     List<Provider> downloadOverUnderProviders(final Match match);
 
-    List<Handicap> downloadHandicap(final Provider provider);
+    List<Handicap> downloadHandicap(final Match match, final Provider provider);
 
-    List<Odds> downloadOdds(final Provider provider);
+    List<Odds> downloadOdds(final Match match, final Provider provider);
 
-    List<OverUnder> downloadOverUnder(final Provider provider);
+    List<OverUnder> downloadOverUnder(final Match match, final Provider provider);
 
     @Retryable(value = SocketTimeoutException.class, maxAttemptsExpression = "${retry.maxAttempts}",
             backoff = @Backoff(delayExpression = "${retry.maxDelay}"))

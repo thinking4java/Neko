@@ -1,37 +1,27 @@
 package com.octopusneko.neko.miner.listener;
 
+import com.octopusneko.neko.miner.job.HandicapProviderJob;
+import com.octopusneko.neko.miner.job.OddsProviderJob;
+import com.octopusneko.neko.miner.job.OverUnderProviderJob;
 import com.octopusneko.neko.miner.listener.event.MatchListEvent;
-import com.octopusneko.neko.miner.listener.event.ProviderEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.model.Match;
-import com.octopusneko.neko.miner.model.Provider;
+import com.octopusneko.neko.miner.job.Job;
 import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
-import com.octopusneko.neko.miner.service.IRestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component("MatchListListener")
 public class MatchListListener implements ApplicationListener<MatchListEvent> {
 
     @Autowired
-    @Qualifier("HandicapListener")
-    private ApplicationListener<ProviderEvent> handicapListener;
-
-    @Autowired
-    @Qualifier("OddsListener")
-    private ApplicationListener<ProviderEvent> oddsListener;
-
-    @Autowired
-    @Qualifier("OverUnderListener")
-    private ApplicationListener<ProviderEvent> overUnderListener;
-
-    @Autowired
-    private IRestService restService;
+    private ApplicationContext applicationContext;
 
     @Autowired
     private JobScheduler jobScheduler;
@@ -45,26 +35,14 @@ public class MatchListListener implements ApplicationListener<MatchListEvent> {
         List<League> savedLeagueMatches = matchService.saveLeagueMatches(leagues);
         savedLeagueMatches.forEach(league -> {
             List<Match> matchList = league.getMatchList();
-            matchList.forEach(match -> {
-                jobScheduler.schedule(() -> downloadHandicapProviders(match));
-                jobScheduler.schedule(() -> downloadOddsProviders(match));
-                jobScheduler.schedule(() -> downloadOverUnderProviders(match));
-            });
+            matchList.forEach(match -> Arrays.asList(createJob(HandicapProviderJob.class, match)
+                    , createJob(OddsProviderJob.class, match)
+                    , createJob(OverUnderProviderJob.class, match))
+                    .forEach(job -> jobScheduler.schedule(job)));
         });
     }
 
-    private void downloadHandicapProviders(Match match) {
-        List<Provider> providers = restService.downloadHandicapProviders(match);
-        handicapListener.onApplicationEvent(new ProviderEvent(providers));
-    }
-
-    private void downloadOddsProviders(Match match) {
-        List<Provider> providers = restService.downloadOddsProviders(match);
-        oddsListener.onApplicationEvent(new ProviderEvent(providers));
-    }
-
-    private void downloadOverUnderProviders(Match match) {
-        List<Provider> providers = restService.downloadOverUnderProviders(match);
-        overUnderListener.onApplicationEvent(new ProviderEvent(providers));
+    private Job createJob(Class<? extends Job> clazz, Match match) {
+        return applicationContext.getBean(clazz, match);
     }
 }

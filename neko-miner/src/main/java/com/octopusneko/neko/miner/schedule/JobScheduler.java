@@ -1,5 +1,6 @@
 package com.octopusneko.neko.miner.schedule;
 
+import com.octopusneko.neko.miner.job.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,19 +19,15 @@ public class JobScheduler {
 
     private static final Logger logger = LoggerFactory.getLogger(JobScheduler.class);
 
-    @Value("${app.job.minDelay:2000}")
-    private long minDelay;
-
-    @Value("${app.job.maxDelay:5000}")
-    private long maxDelay;
-
     private final ExecutorService workThreadPool;
 
     private final BlockingQueue<Runnable> workQueue;
 
     private final AtomicBoolean running = new AtomicBoolean(true);
 
-    public JobScheduler(@Value("${app.job.poolSize: 2}") int poolSize) {
+    public JobScheduler(@Value("${app.job.poolSize: 2}") int poolSize
+            , @Value("${app.job.minDelay:2000}") long minDelay
+            , @Value("${app.job.maxDelay:5000}") long maxDelay) {
         workThreadPool = Executors.newFixedThreadPool(poolSize);
         workQueue = new LinkedBlockingQueue<>();
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -48,12 +45,16 @@ public class JobScheduler {
         });
     }
 
-    public void schedule(Runnable job) {
+    public void schedule(Job job) {
         workQueue.add(job);
     }
 
     private long getRandomRangeDelay(long minDelay, long maxDelay) {
         return new Random().longs(minDelay, maxDelay).findFirst().orElseThrow(() -> new IllegalArgumentException("Invalid range between " + minDelay + " and " + maxDelay));
+    }
+
+    public void dump() {
+
     }
 
 }

@@ -3,6 +3,7 @@ package com.octopusneko.neko.miner.service;
 import com.octopusneko.neko.miner.config.MatchConfig;
 import com.octopusneko.neko.miner.model.*;
 import com.octopusneko.neko.miner.parser.*;
+import com.octopusneko.neko.miner.utils.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -178,7 +179,10 @@ class RestServiceImplTest {
     @Test
     void test_downloadHandicap() {
         League league = new League(33, "PrimeLeague", true);
+
         Match match = new Match(10000L, league, MatchState.FINISHED);
+        match.setMatchTime(DateUtils.parseToUTCTime("2021-07-22 15:30", "yyyy-MM-dd HH:mm"));
+
         Provider provider = new Provider();
         provider.setProviderId(new Provider.ProviderId(match.getId(), 8, 0));
         provider.setName("365");
@@ -197,11 +201,11 @@ class RestServiceImplTest {
         Mockito.when(restTemplate.exchange("", HttpMethod.GET,
                 new HttpEntity<>(null, fakeHttpHeaders()), String.class))
                 .thenReturn(responseEntity);
-        Mockito.when(matchService.findMatchById(10000L)).thenReturn(match);
+        
         Mockito.when(handicapParser.parse(match, provider.getProviderId().getCode(), responseEntity.getBody()))
                 .thenReturn(Collections.singletonList(handicap));
 
-        List<Handicap> handicapList = restService.downloadHandicap(provider);
+        List<Handicap> handicapList = restService.downloadHandicap(match, provider);
         Assertions.assertNotNull(handicapList);
         Assertions.assertEquals(1, handicapList.size());
 
@@ -214,7 +218,10 @@ class RestServiceImplTest {
     @Test
     void test_downloadOdds() {
         League league = new League(33, "PrimeLeague", true);
+
         Match match = new Match(10000L, league, MatchState.FINISHED);
+        match.setMatchTime(DateUtils.parseToUTCTime("2021-07-22 15:30", "yyyy-MM-dd HH:mm"));
+
         Provider provider = new Provider();
         provider.setProviderId(new Provider.ProviderId(match.getId(), 281, 1));
         provider.setName("365");
@@ -233,11 +240,11 @@ class RestServiceImplTest {
         Mockito.when(restTemplate.exchange("", HttpMethod.GET,
                 new HttpEntity<>(null, fakeHttpHeaders()), String.class))
                 .thenReturn(responseEntity);
-        Mockito.when(matchService.findMatchById(10000L)).thenReturn(match);
+        
         Mockito.when(oddsParser.parse(match, provider.getProviderId().getCode(), responseEntity.getBody()))
                 .thenReturn(Collections.singletonList(odds));
 
-        List<Odds> oddsList = restService.downloadOdds(provider);
+        List<Odds> oddsList = restService.downloadOdds(match, provider);
         Assertions.assertNotNull(oddsList);
         Assertions.assertEquals(1, oddsList.size());
 
@@ -250,7 +257,10 @@ class RestServiceImplTest {
     @Test
     void test_downloadOverUnder() {
         League league = new League(33, "PrimeLeague", true);
+
         Match match = new Match(10000L, league, MatchState.FINISHED);
+        match.setMatchTime(DateUtils.parseToUTCTime("2021-07-22 15:30", "yyyy-MM-dd HH:mm"));
+
         Provider provider = new Provider();
         provider.setProviderId(new Provider.ProviderId(match.getId(), 8, 2));
         provider.setName("365");
@@ -269,11 +279,11 @@ class RestServiceImplTest {
         Mockito.when(restTemplate.exchange("", HttpMethod.GET,
                 new HttpEntity<>(null, fakeHttpHeaders()), String.class))
                 .thenReturn(responseEntity);
-        Mockito.when(matchService.findMatchById(10000L)).thenReturn(match);
+        
         Mockito.when(overUnderParser.parse(match, provider.getProviderId().getCode(), responseEntity.getBody()))
                 .thenReturn(Collections.singletonList(overUnder));
 
-        List<OverUnder> overUnderList = restService.downloadOverUnder(provider);
+        List<OverUnder> overUnderList = restService.downloadOverUnder(match, provider);
         Assertions.assertNotNull(overUnderList);
         Assertions.assertEquals(1, overUnderList.size());
 

@@ -3,7 +3,6 @@ package com.octopusneko.neko.miner.schedule;
 import com.octopusneko.neko.miner.listener.event.MatchListEvent;
 import com.octopusneko.neko.miner.model.League;
 import com.octopusneko.neko.miner.service.IRestService;
-import com.octopusneko.neko.miner.service.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;

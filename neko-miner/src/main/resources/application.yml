@@ -27,8 +27,8 @@ app:
     poolSize: 1
     fixedRateString: '180000'
   job:
-    minDelay: 2000
-    maxDelay: 5000
+    minDelay: 500
+    maxDelay: 1000
     poolSize: 8
   match:
     baseUrl: 'https://m.nowscore.com'

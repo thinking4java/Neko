@@ -1,7 +1,9 @@
 package com.octopusneko.neko.miner.listener;
 
 import com.octopusneko.neko.miner.config.MatchConfig;
+import com.octopusneko.neko.miner.job.OddsJob;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
+import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.Odds;
 import com.octopusneko.neko.miner.model.Provider;
 import com.octopusneko.neko.miner.payload.ProviderEntry;
@@ -9,13 +11,14 @@ import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
 import com.octopusneko.neko.miner.service.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("OddsListener")
+@Component
 public class OddsListener implements ApplicationListener<ProviderEvent> {
 
     @Autowired
@@ -30,6 +33,9 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
     @Autowired
     private RestServiceImpl restService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
     public void onApplicationEvent(ProviderEvent event) {
         List<Integer> oddProviderIds = matchConfig.getOddsProviders().stream()
@@ -40,11 +46,7 @@ public class OddsListener implements ApplicationListener<ProviderEvent> {
                 .collect(Collectors.toList());
 
         List<Provider> savedProviders = matchService.saveProviders(filteredProviders);
-        savedProviders.forEach(provider -> jobScheduler.schedule(() -> downloadOdds(provider)));
-    }
-
-    private void downloadOdds(Provider provider) {
-        List<Odds> oddsList = restService.downloadOdds(provider);
-        matchService.saveOdds(oddsList);
+        Match match = event.getMatch();
+        savedProviders.forEach(provider -> jobScheduler.schedule(applicationContext.getBean(OddsJob.class, match, provider)));
     }
 }

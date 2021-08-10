@@ -1,21 +1,22 @@
 package com.octopusneko.neko.miner.listener;
 
 import com.octopusneko.neko.miner.config.MatchConfig;
+import com.octopusneko.neko.miner.job.HandicapJob;
 import com.octopusneko.neko.miner.listener.event.ProviderEvent;
-import com.octopusneko.neko.miner.model.Handicap;
+import com.octopusneko.neko.miner.model.Match;
 import com.octopusneko.neko.miner.model.Provider;
 import com.octopusneko.neko.miner.payload.ProviderEntry;
 import com.octopusneko.neko.miner.schedule.JobScheduler;
 import com.octopusneko.neko.miner.service.IMatchService;
-import com.octopusneko.neko.miner.service.RestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component("HandicapListener")
+@Component
 public class HandicapListener implements ApplicationListener<ProviderEvent> {
 
     @Autowired
@@ -25,10 +26,10 @@ public class HandicapListener implements ApplicationListener<ProviderEvent> {
     private MatchConfig matchConfig;
 
     @Autowired
-    private RestServiceImpl restService;
+    private JobScheduler jobScheduler;
 
     @Autowired
-    private JobScheduler jobScheduler;
+    private ApplicationContext applicationContext;
 
     @Override
     public void onApplicationEvent(ProviderEvent event) {
@@ -38,13 +39,11 @@ public class HandicapListener implements ApplicationListener<ProviderEvent> {
         List<Provider> filteredProviders = event.getProviders().stream()
                 .filter(provider -> handicapProviderIds.contains(provider.getProviderId().getCode()))
                 .collect(Collectors.toList());
-
         List<Provider> savedProviders = matchService.saveProviders(filteredProviders);
-        savedProviders.forEach(provider -> jobScheduler.schedule(() -> downloadHandicap(provider)));
-    }
-
-    private void downloadHandicap(Provider provider) {
-        List<Handicap> handicaps = restService.downloadHandicap(provider);
-        matchService.saveHandicap(handicaps);
+        Match match = event.getMatch();
+        savedProviders.forEach(provider -> {
+            HandicapJob handicapJob = applicationContext.getBean(HandicapJob.class, match, provider);
+            jobScheduler.schedule(handicapJob);
+        });
     }
 }

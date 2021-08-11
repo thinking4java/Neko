@@ -55,9 +55,7 @@ public class RestTemplateConfig {
                 ClientHttpRequestExecution execution) throws IOException {
 
             logRequestDetails(request);
-            long start = System.nanoTime();
             ClientHttpResponse response = execution.execute(request, body);
-            logger.debug("Request spent time: {}", (System.nanoTime() - start) / 1e+9);
             logResponseDetails(response);
             return response;
         }

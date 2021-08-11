@@ -7,6 +7,11 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
   h2:
     console:
       enabled: true
@@ -20,18 +25,18 @@ rest:
 
 retry:
   maxAttempts: 3
-  maxDelay: 200
+  retryDelay: 500
 
 app:
   schedule:
-    poolSize: 1
+    poolSize: 3
     updateMatchFixedRate: '180000'
-    dumpJobFixedRate: '300000'
+    dumpJobFixedRate: '5000'
   job:
     poolSize: 8
     queueSize: 100
-    minDelay: 100
-    maxDelay: 1000
+    minDelay: 200
+    maxDelay: 500
   match:
     baseUrl: 'https://m.nowscore.com'
 
@@ -105,6 +110,12 @@ app:
         name: '欧联杯'
       - id: 192
         name: '亚冠杯'
+      - id: 89
+        name: '自由杯'
+      - id: 109
+        name: '超霸杯'
+      - id: 344
+        name: '美冠杯'
 
     handicapProviders:
       - id: 1

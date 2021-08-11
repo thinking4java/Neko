@@ -1,8 +1,6 @@
 package com.octopusneko.neko.miner.service;
 
 import com.octopusneko.neko.miner.model.*;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 
 import java.net.SocketTimeoutException;
 import java.time.LocalDate;
@@ -24,7 +22,5 @@ public interface IRestService {
 
     List<OverUnder> downloadOverUnder(final Match match, final Provider provider);
 
-    @Retryable(value = SocketTimeoutException.class, maxAttemptsExpression = "${retry.maxAttempts}",
-            backoff = @Backoff(delayExpression = "${retry.maxDelay}"))
     String getString(String url) throws SocketTimeoutException;
 }

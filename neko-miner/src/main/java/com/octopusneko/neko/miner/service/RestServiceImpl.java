@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class RestServiceImpl implements IRestService {
+public class RestServiceImpl extends RetryableRestClient implements IRestService {
 
     private static final String MATCH_ID_PLACEHOLDER = "<matchId>";
     private static final String PROVIDER_ID_PLACEHOLDER = "<providerId>";
@@ -50,8 +48,7 @@ public class RestServiceImpl implements IRestService {
     public String getString(String url) {
         HttpHeaders headers = fakeHttpHeaders();
         HttpEntity<Void> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        return response.getBody();
+        return get(restTemplate, url, httpEntity, String.class);
     }
 
     private HttpHeaders fakeHttpHeaders() {

@@ -98,13 +98,6 @@
 			<version>${json.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.awaitility/awaitility -->
 		<dependency>
 			<groupId>org.awaitility</groupId>
